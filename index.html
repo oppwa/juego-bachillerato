@@ -3,574 +3,177 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="
-#eceffa">
-<title>Tu bachillerato · El juego · UAC</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<title>Bachillerato Quest · UAC</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Open+Sans:wght@400;600;700&display=swap">
 <style>
-:root{
-  --bg:
-#eceffa;--ink:
-#0d1020;--dim:
-#4b5268;--glass:rgba(255,255,255,.58);--edge:rgba(255,255,255,.95);
-  --rosa:
-#FF6384;--azul:
-#36A2EB;--amarillo:
-#FFCE56;--turquesa:
-#4BC0C0;--purpura:
-#9966FF;--naranja:
-#FF9F40;--gris:
-#C9CBCF;
-  --display:'Unbounded','Segoe UI',system-ui,sans-serif;
-  --body:'Sora',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html,body{height:100%;overflow:hidden}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-:focus-visible{outline:3px solid var(--azul);outline-offset:3px;border-radius:10px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
-
-/* HUD */
-#hud{position:fixed;top:0;left:0;right:0;z-index:30;display:flex;justify-content:space-between;align-items:center;gap:.8rem;padding:.6rem 1rem;
-  background:rgba(255,255,255,.72);border-bottom:1px solid var(--edge);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 4px 20px -12px rgba(30,40,100,.35)}
-#hud .brand{font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:-.02em;display:flex;align-items:center;gap:.5rem}
-#hud .brand span{width:10px;height:10px;border-radius:50%;background:var(--rosa);box-shadow:0 0 0 0 rgba(255,99,132,.5);animation:ping 2.4s infinite}
-@keyframes ping{70%{box-shadow:0 0 0 8px rgba(255,99,132,0)}100%{box-shadow:0 0 0 0 rgba(255,99,132,0)}}
-#hud .stats{display:flex;gap:1rem;align-items:center;font-size:.82rem;color:var(--dim);font-weight:500}
-#hud .stats b{color:var(--ink);font-weight:600}
-#progress{position:fixed;top:52px;left:0;right:0;height:5px;z-index:29;background:rgba(13,16,32,.08)}
-#progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rosa),var(--turquesa));transition:width .35s}
-@media (max-width:560px){#hud .brand{font-size:.8rem}#hud .stats{font-size:.72rem;gap:.6rem}}
-
-/* Escenario */
-#world{position:fixed;inset:0;overflow-x:auto;overflow-y:hidden;scroll-behavior:smooth;background:linear-gradient(180deg,
-#cfe7ff 0%,
-#e8f3ff 45%,
-#f7fbff 100%)}
-#strip{position:relative;height:100%;min-width:100%;will-change:transform}
-.cloud{position:absolute;background:#fff;border-radius:50%;opacity:.85;filter:blur(1px);pointer-events:none}
-.cloud:before,.cloud:after{content:"";position:absolute;background:#fff;border-radius:50%}
-.cloud:before{width:70%;height:120%;left:15%;top:-45%}
-.cloud:after{width:55%;height:100%;right:-15%;top:-25%}
-.ground{position:absolute;bottom:0;left:0;right:0;height:70px;background:linear-gradient(180deg,
-#8ed46b,
-#5fae44);box-shadow:0 -3px 0 
-#4a8f37 inset}
-.ground:after{content:"";position:absolute;top:100%;left:0;right:0;height:60px;background:linear-gradient(180deg,
-#b98a5a,
-#8a6238)}
-.hill{position:absolute;bottom:60px;width:180px;height:120px;background:radial-gradient(circle at 50% 100%,
-#a5e07c,
-#6dbb4a);border-radius:50% 50% 0 0;opacity:.9}
-.bush{position:absolute;bottom:60px;width:70px;height:38px;background:radial-gradient(circle at 50% 100%,
-#7ecb57,
-#4f9e35);border-radius:50% 50% 40% 40%}
-
-/* Bloques */
-.block{position:absolute;width:52px;height:52px;border-radius:10px;border:0;cursor:pointer;z-index:5;
-  background:linear-gradient(160deg,
-#ffd96b,
-#e8a900);box-shadow:0 6px 0 
-#b98600,0 0 0 2px rgba(0,0,0,.08) inset;
-  display:grid;place-items:center;font-size:1.35rem;transition:transform .12s;transform-origin:bottom center}
-.block:hover{transform:translateY(-3px)}
-.block.hit{animation:bump .3s ease}
-@keyframes bump{0%{transform:translateY(0)}40%{transform:translateY(-14px)}100%{transform:translateY(0)}}
-.block.done{background:linear-gradient(160deg,
-#c9c9c9,
-#8a8a8a);box-shadow:0 6px 0 
-#5f5f5f,0 0 0 2px rgba(0,0,0,.08) inset;cursor:default;filter:grayscale(.4)}
-.block.done .q{opacity:.35}
-.block.locked{filter:brightness(.75) saturate(.6);cursor:not-allowed}
-.block .q{font-family:var(--display);font-weight:700;color:
-#7a5300;font-size:1.4rem;text-shadow:0 1px 0 #fff8}
-.block.done .q{color:
-#3f3f3f}
-
-/* Moneda */
-.coin{position:absolute;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,
-#fff3a8,
-#ffce56 60%,
-#e8a900);border:2px solid 
-#b98600;z-index:6;pointer-events:none;animation:spin 1s linear infinite}
-.coin:after{content:"";position:absolute;inset:5px;border-radius:50%;border:2px solid #fff6;background:transparent}
-@keyframes spin{0%{transform:scaleX(1)}50%{transform:scaleX(.25)}100%{transform:scaleX(1)}}
-.coin.pop{animation:coinUp .7s ease forwards}
-@keyframes coinUp{0%{transform:translateY(0) scale(1);opacity:1}70%{transform:translateY(-60px) scale(1.1);opacity:1}100%{transform:translateY(-90px) scale(.6);opacity:0}}
-
-/* Personaje */
-#player{position:absolute;bottom:60px;width:44px;height:60px;z-index:8;transition:left .08s linear;will-change:left}
-#player .body{position:absolute;inset:0;border-radius:22px 22px 14px 14px;background:linear-gradient(180deg,
-#FF6384,
-#c93a5a);box-shadow:0 4px 0 
-#9c2a45}
-#player .head{position:absolute;top:-16px;left:50%;transform:translateX(-50%);width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,
-#ffd7b0,
-#f0b98a);box-shadow:0 0 0 3px 
-#0d1020 inset}
-#player .eye{position:absolute;top:8px;width:6px;height:8px;border-radius:50%;background:
-#0d1020}
-#player .eye.l{left:8px}#player .eye.r{right:8px}
-#player .cap{position:absolute;top:-22px;left:50%;transform:translateX(-50%);width:38px;height:14px;border-radius:10px 10px 4px 4px;background:
-#36A2EB}
-#player .cap:after{content:"";position:absolute;right:-8px;top:4px;width:16px;height:8px;border-radius:4px;background:
-#36A2EB}
-#player .arm{position:absolute;top:18px;width:10px;height:22px;border-radius:6px;background:
-#c93a5a}
-#player .arm.l{left:-6px;transform:rotate(12deg)}#player .arm.r{right:-6px;transform:rotate(-12deg)}
-#player.walk .body{animation:bob .4s ease infinite alternate}
-@keyframes bob{to{transform:translateY(-2px)}}
-#player.hit .head{animation:headHit .3s}
-@keyframes headHit{0%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-8px)}100%{transform:translateX(-50%) translateY(0)}}
-
-/* Popup del paso */
-#pop{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:1rem;background:rgba(13,16,32,.45);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-#pop.on{display:grid}
-#pop .card{max-width:520px;width:100%;max-height:88vh;overflow-y:auto;background:rgba(255,255,255,.9);border:1px solid var(--edge);border-radius:26px;padding:1.4rem 1.5rem;box-shadow:0 30px 70px -20px rgba(30,40,100,.5);animation:popIn .3s cubic-bezier(.2,.8,.2,1)}
-@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(20px)}to{opacity:1;transform:none}}
-#pop .num{font-family:var(--display);font-weight:700;font-size:.78rem;color:var(--azul);letter-spacing:.06em;text-transform:uppercase}
-#pop .who{display:inline-block;font-size:.68rem;font-weight:600;padding:.2rem .65rem;border-radius:99px;color:#fff;background:var(--c,var(--azul));margin-left:.5rem;letter-spacing:.02em}
-#pop h2{font-family:var(--display);font-weight:500;font-size:1.35rem;line-height:1.2;margin:.5rem 0 .3rem;letter-spacing:-.02em}
-#pop .desc{color:var(--dim);font-size:.95rem;margin-bottom:.8rem}
-#pop .detail{margin:.6rem 0 .8rem}
-#pop .detail .sub{display:flex;gap:.55rem;align-items:flex-start;padding:.5rem .7rem;border-radius:12px;background:rgba(13,16,32,.04);margin-bottom:.4rem;font-size:.85rem}
-#pop .detail .sub b{font-family:var(--display);font-weight:500;font-size:.82rem;color:var(--c,var(--azul));min-width:92px}
-#pop .detail .sub span{color:var(--dim)}
-#pop .example{margin:.4rem 0 .8rem;border-radius:14px;border:1px dashed rgba(13,16,32,.15);padding:.7rem .9rem;background:rgba(54,162,235,.06);font-size:.82rem;color:var(--dim)}
-#pop .example b{display:block;font-family:var(--display);font-weight:500;font-size:.8rem;color:var(--azul);margin-bottom:.2rem}
-#pop .example u{text-decoration:none;border-bottom:1px solid #888;padding:0 8px}
-#pop .row{display:flex;gap:.6rem;justify-content:flex-end;flex-wrap:wrap;margin-top:.8rem}
-#pop button{border:0;border-radius:99px;padding:.7rem 1.3rem;font:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:transform .15s,box-shadow .2s}
-#pop button:active{transform:scale(.97)}
-#pop .primary{background:var(--ink);color:#fff;box-shadow:0 8px 20px -8px rgba(13,16,32,.6)}
-#pop .primary:hover{background:var(--azul)}
-#pop .ghost{background:rgba(13,16,32,.06);color:var(--ink)}
-#pop .ghost:hover{background:rgba(13,16,32,.12)}
-
-/* Controles */
-#controls{position:fixed;bottom:0;left:0;right:0;z-index:28;display:flex;justify-content:space-between;align-items:flex-end;padding:.7rem 1rem;pointer-events:none}
-#controls .pad{display:flex;gap:.5rem;pointer-events:auto}
-#controls button{width:56px;height:56px;border-radius:50%;border:0;background:rgba(255,255,255,.85);color:var(--ink);font-size:1.4rem;cursor:pointer;box-shadow:0 6px 18px -6px rgba(30,40,100,.4);backdrop-filter:blur(10px);transition:transform .12s,background .2s;user-select:none;-webkit-user-select:none;touch-action:manipulation}
-#controls button:active,#controls button.on{transform:scale(.92);background:var(--azul);color:#fff}
-#controls .jump{background:var(--rosa);color:#fff;width:68px;height:68px;font-size:1.6rem}
-#controls .jump:active,#controls .jump.on{background:
-#c93a5a}
-#hint{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:27;background:rgba(13,16,32,.75);color:#fff;font-size:.82rem;padding:.5rem 1rem;border-radius:99px;backdrop-filter:blur(8px);opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+:root{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:#5c94fc;font-family:"Open Sans",system-ui,sans-serif;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+canvas{display:block;width:100vw;height:100vh;image-rendering:pixelated}
+#hud{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;padding:8px 12px;font:10px/1.5 "Press Start 2P",monospace;color:#fff;text-shadow:2px 2px 0 #0007;pointer-events:none}
+#hint{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);max-width:90vw;background:#000b;color:#fff;padding:8px 14px;border-radius:99px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;text-align:center}
 #hint.on{opacity:1}
-@media (max-width:560px){#controls button{width:50px;height:50px;font-size:1.2rem}#controls .jump{width:60px;height:60px}}
-
-/* Pantalla de victoria */
-#win{position:fixed;inset:0;z-index:45;display:none;place-items:center;padding:1rem;background:rgba(13,16,32,.6);backdrop-filter:blur(10px)}
-#win.on{display:grid}
-#win .card{max-width:480px;text-align:center;background:rgba(255,255,255,.94);border:1px solid var(--edge);border-radius:28px;padding:2rem 1.6rem;box-shadow:0 30px 70px -20px rgba(30,40,100,.5);animation:popIn .4s cubic-bezier(.2,.8,.2,1)}
-#win h2{font-family:var(--display);font-weight:700;font-size:1.6rem;margin-bottom:.5rem;background:linear-gradient(100deg,var(--azul),var(--rosa));-webkit-background-clip:text;background-clip:text;color:transparent}
-#win p{color:var(--dim);font-size:.95rem;margin-bottom:1.2rem}
-#win button{border:0;border-radius:99px;padding:.8rem 1.6rem;font:inherit;font-weight:600;background:var(--ink);color:#fff;cursor:pointer}
-#win button:hover{background:var(--azul)}
-#win .stats{display:flex;justify-content:center;gap:1.5rem;margin-bottom:1.2rem;font-size:.85rem;color:var(--dim)}
-#win .stats b{display:block;font-family:var(--display);font-weight:700;font-size:1.4rem;color:var(--ink)}
+#pop,#win{position:fixed;inset:0;z-index:10;display:none;place-items:center;padding:12px;background:rgba(8,18,50,.6)}
+.on{display:grid!important}
+.card{background:#fff;color:#1b2438;width:min(520px,100%);max-height:88vh;overflow:auto;border-radius:16px;border-top:8px solid #0a2e6e;padding:16px 18px;font-size:14px;line-height:1.45;box-shadow:0 20px 50px #0008}
+.card h2{font:700 13px/1.6 "Press Start 2P",monospace;color:#0a2e6e;margin:8px 0}
+.num{font:700 9px "Press Start 2P",monospace;color:#555}.who{display:inline-block;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;margin-left:6px}
+.sub{display:flex;gap:8px;align-items:flex-start;background:#eef2fa;border-radius:10px;padding:6px 8px;margin:4px 0;font-size:13px}
+.sub i{flex:none;width:20px;height:20px;border-radius:50%;background:#0a2e6e;color:#fff;font:700 11px/20px sans-serif;text-align:center}.sub b{flex:none;min-width:84px;color:#0a2e6e}
+.ex{margin:8px 0;padding:10px;border:1px dashed #b9a560;background:#fffdf5;font-size:12px}.ex b{display:block;color:#0a2e6e}.ex u{text-decoration:none;border-bottom:1px solid #888;padding:0 8px}
+.btn{border:0;border-radius:99px;padding:10px 18px;background:#0a2e6e;color:#fff;font:700 14px "Open Sans",sans-serif;border-bottom:4px solid #e8a900;cursor:pointer;margin-top:8px}
+#win .card{text-align:center;border-top-color:#e8a900}#win .st{display:flex;justify-content:center;gap:24px;margin:10px 0;font-weight:700;color:#0a2e6e}
+#ctl{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 10px);display:flex;justify-content:space-between;padding:0 14px;pointer-events:none}
+#ctl div{display:flex;gap:10px;pointer-events:auto}#ctl button{width:62px;height:62px;border-radius:50%;border:0;background:#ffffffcc;font-size:24px;touch-action:none}
+@media (pointer:fine){#ctl{display:none}}
+#fd{position:fixed;inset:0;z-index:9;background:#000;opacity:0;pointer-events:none;transition:opacity .3s}
 </style>
 </head>
 <body>
-<div id="hud">
-  <div class="brand"><span></span>Bachillerato Quest</div>
-  <div class="stats">
-    <div>Paso <b id="hudStep">1</b>/<b id="hudTotal">28</b></div>
-    <div>Monedas <b id="hudCoins">0</b></div>
-  </div>
-</div>
-<div id="progress"><i id="progressFill"></i></div>
-
-<div id="world" aria-label="Escenario del juego">
-  <div id="strip"></div>
-</div>
-
-<div id="hint">Usa ← → para caminar · ↑ o Espacio para saltar y golpear el cubo</div>
-
-<div id="controls">
-  <div class="pad">
-    <button id="btnLeft" aria-label="Caminar a la izquierda">←</button>
-    <button id="btnRight" aria-label="Caminar a la derecha">→</button>
-  </div>
-  <div class="pad">
-    <button class="jump" id="btnJump" aria-label="Saltar y golpear">↑</button>
-  </div>
-</div>
-
-<div id="pop" role="dialog" aria-modal="true" aria-labelledby="popTitle">
-  <div class="card">
-    <div><span class="num" id="popNum"></span><span class="who" id="popWho"></span></div>
-    <h2 id="popTitle"></h2>
-    <p class="desc" id="popDesc"></p>
-    <div class="detail" id="popDetail"></div>
-    <div class="example" id="popExample" hidden></div>
-    <div class="row">
-      <button class="ghost" id="popClose">Cerrar</button>
-      <button class="primary" id="popNext">Recoger moneda 🪙</button>
-    </div>
-  </div>
-</div>
-
-<div id="win">
-  <div class="card">
-    <h2>🎉 ¡Bachiller logrado!</h2>
-    <p>Completaste los 28 pasos del proceso. Ya puedes continuar con tu título profesional.</p>
-    <div class="stats">
-      <div><b id="winSteps">28</b>pasos</div>
-      <div><b id="winCoins">28</b>monedas</div>
-    </div>
-    <button id="winRestart">Jugar de nuevo</button>
-  </div>
-</div>
-
+<canvas id="cv"></canvas><div id="fd"></div>
+<div id="hud"><span>UAC · BACHILLERATO</span><span id="h1"></span></div>
+<div id="hint"></div>
+<div id="ctl"><div><button id="bl">◀</button><button id="br">▶</button></div><div><button id="bd">▼</button><button id="bj">▲</button></div></div>
+<div id="pop" role="dialog" aria-modal="true"><div class="card" id="pc"><span class="num" id="pn"></span><span class="who" id="pw"></span><h2 id="pt"></h2><p id="pd"></p><div id="ps"></div><div class="ex" id="pe" hidden></div><div style="text-align:right"><button class="btn" id="pb">¡Entendido! ▶</button></div></div></div>
+<div id="win" role="dialog" aria-modal="true"><div class="card"><div style="font-size:3rem">🎓</div><h2>¡FELICITACIONES, BACHILLER!</h2><p>Superaste los barrancos, esquivaste las observaciones y completaste todos los pasos. Ya puedes solicitar el apto al título profesional.</p><div class="st"><span>📋 <b id="ws"></b> pasos</span><span>🪙 <b id="wc"></b> monedas</span></div><button class="btn" onclick="location.reload()">Jugar de nuevo</button></div></div>
 <script>
-/* ==================== DATOS ==================== */
-const C={al:"
-#FF6384",fa:"
-#36A2EB",un:"
-#9966FF",au:"
-#FF9F40",gt:"
-#4BC0C0",su:"
-#C9CBCF"};
-const PAL=["
-#FF6384","
-#36A2EB","
-#FFCE56","
-#4BC0C0","
-#9966FF","
-#FF9F40","
-#C9CBCF"];
+const C={al:"#d6243f",fa:"#1f5fa8",un:"#7a4fb0",au:"#c26a00",gt:"#1f8a55",su:"#3a3f4b"};
 const EX={
-foto:{t:"FOTOGRAFÍA PARA TU DIPLOMA",b:'Fondo blanco · terno oscuro · formato JPG · rostro despejado.'},
-cmat:{t:"CONSTANCIA DE PRIMERA MATRÍCULA",b:'Se hace constar que <u>Apellidos y nombres</u>, código <u>000000</u>, de la Escuela Profesional de <u>————</u>, realizó su primera matrícula el <u>dd/mm/aaaa</u>.<br>Cusco, <u>__</u> de <u>____</u> de 2026.'},
-ceg:{t:"CONSTANCIA DE EGRESADO",b:'Se hace constar que <u>Apellidos y nombres</u>, código <u>000000</u>, concluyó sus estudios el <u>dd/mm/aaaa</u>, con <u>000</u> créditos aprobados.<br>Cusco, <u>__</u> de <u>____</u> de 2026.'},
-apto:{t:"RESOLUCIÓN DE DECLARACIÓN DE APTO",b:'<b>RESOLUCIÓN N.° ___-2026</b><br>VISTO el expediente de <u>Apellidos y nombres</u>…<br>SE RESUELVE: Declarar <b>APTO</b> para optar el grado académico de Bachiller.'},
-rcf:{t:"RESOLUCIÓN DE CONSEJO DE FACULTAD",b:'<b>RESOLUCIÓN N.° ___-2026-CF</b><br>Sesión del <u>dd/mm/aaaa</u>.<br>SE RESUELVE: Aprobar la propuesta de otorgamiento del grado de <b>Bachiller en <u>————</u></b> a <u>Apellidos y nombres</u>.'},
-rcu:{t:"RESOLUCIÓN DE CONSEJO UNIVERSITARIO",b:'<b>RESOLUCIÓN N.° ___-2026-CU-UAC</b><br>VISTO… CONSIDERANDO…<br>SE RESUELVE: <b>Otorgar</b> el grado académico de <b>BACHILLER EN <u>————</u></b> a <u>Apellidos y nombres</u>.<br><i>Firmado digitalmente por el Rector</i> ✍️'},
-mail:{t:"CORREO QUE RECIBIRÁS",b:'<b>De:</b> Oficina de Grados y Títulos<br><b>Asunto:</b> Resolución de Consejo Universitario<br>Estimado(a) alumno(a): adjuntamos su resolución firmada digitalmente.<br>📎 Resolucion_CU.pdf<br><i>Revisa también tu bandeja de spam.</i>'},
-dip:{t:"DIPLOMA DE BACHILLER",b:'<div style="text-align:center">UNIVERSIDAD ANDINA DEL CUSCO<br>confiere el grado académico de<br><b>BACHILLER EN <u>————</u></b><br>a <u>Apellidos y nombres</u><br>Diploma N.° <u>___</u> · Código <u>___</u></div>'},
-ofi:{t:"OFICIO A SUNEDU",b:'<b>OFICIO N.° ___-2026-SG</b><br>Asunto: Remite padrón y diplomas para registro.<br>Adjuntos: 1) Padrón de expedientes · 2) Diplomas escaneados.<br>Firmado por la Secretaría General.'},
-erp:{t:"ERP · CONDICIÓN DEL ALUMNO",b:'Alumno: <u>Apellidos y nombres</u><br>Condición: <s>EGRESANTE</s> → <b style="color:
-#4BC0C0">BACHILLER ✔</b><br>Observaciones: ninguna<br>Registro SUNEDU: <b>registrado</b>'}
-};
-
-const P=[
-["Fase 1 · Tu solicitud y los requisitos",null,[
-["📝","al","ALUMNO","Solicitas el bachillerato","Inicias el trámite en el sistema ERP.",[]],
+foto:["FOTOGRAFÍA PARA TU DIPLOMA","Fondo blanco · terno oscuro · formato JPG · rostro despejado."],
+cmat:["CONSTANCIA DE PRIMERA MATRÍCULA","Se hace constar que <u>Apellidos y nombres</u>, código <u>000000</u>, realizó su primera matrícula el <u>dd/mm/aaaa</u>."],
+ceg:["CONSTANCIA DE EGRESADO","Se hace constar que <u>Apellidos y nombres</u> concluyó sus estudios el <u>dd/mm/aaaa</u>, con <u>000</u> créditos."],
+apto:["RESOLUCIÓN DE APTO","<b>RESOLUCIÓN N.° ___-2026</b><br>SE RESUELVE: declarar <b>APTO</b> a <u>Apellidos y nombres</u> para optar el grado de Bachiller."],
+rcf:["RESOLUCIÓN DE CONSEJO DE FACULTAD","<b>RESOLUCIÓN N.° ___-2026-CF</b><br>SE RESUELVE: aprobar el otorgamiento del grado de <b>Bachiller en <u>————</u></b>."],
+mail:["CORREO QUE RECIBIRÁS","<b>De:</b> Oficina de Grados y Títulos<br><b>Asunto:</b> Resolución de Consejo Universitario<br>📎 Resolucion_CU.pdf (firmada digitalmente por el Rector)<br><i>Revisa también tu spam.</i>"],
+dip:["DIPLOMA DE BACHILLER","<div style='text-align:center'>UNIVERSIDAD ANDINA DEL CUSCO<br>confiere el grado académico de<br><b>BACHILLER EN <u>————</u></b><br>a <u>Apellidos y nombres</u><br>Diploma N.° <u>___</u> · Código <u>___</u></div>"],
+ofi:["OFICIO A SUNEDU","<b>OFICIO N.° ___-2026-SG</b><br>Remite padrón y diplomas escaneados para registro. Firmado por la Secretaría General."],
+erp:["ERP · CONDICIÓN DEL ALUMNO","Condición: <s>EGRESANTE</s> → <b style='color:#1f8a55'>BACHILLER ✔</b><br>Observaciones: ninguna · Registro SUNEDU: <b>registrado</b>"]};
+const S=[
+["📝","al","ALUMNO","Solicitas el bachillerato","Inicias el trámite en el sistema.",[]],
 ["📷","al","ALUMNO","Subes tu fotografía","Fondo blanco, terno oscuro, formato JPG.",[],"foto"],
 ["🌐","un","CENTRO DE IDIOMAS","Validan tu idioma","Idioma extranjero o lengua nativa.",[]],
-["💰","un","UNIDAD DE TESORERÍA","Revisan deudas económicas","Validan que no tengas deuda.",[]],
-["🏛️","fa","DECANATO","Deuda administrativa y constancia","Validan que no tengas deuda administrativa y emiten tu constancia.",[]],
+["💰","un","TESORERÍA","Revisan deudas económicas","Validan que no tengas deuda económica.",[]],
+["🏛️","fa","DECANATO","Deuda administrativa y constancia","Validan deuda administrativa y emiten tu constancia.",[]],
 ["📄","un","PROCESOS TÉCNICOS ACADÉMICOS","Constancia de primera matrícula","Cargan el documento con la fecha de tu primera matrícula.",[],"cmat"],
 ["🎒","un","PROCESOS TÉCNICOS ACADÉMICOS","Constancia de egresado","Cargan tu constancia de egresado.",[],"ceg"],
 ["💻","un","CENFOTI","Certificado de tecnologías de información","Se valida en todas las escuelas, excepto Ingeniería de Sistemas.",[]],
 ["🔬","fa","DECANATO","Curso de Trabajo de Investigación","Validan que lo hayas aprobado.",[]],
-["✅","fa","DECANATO","Resolución de declaración de apto","Cargan la resolución que te declara apto.",[],"apto"]]],
-["Fase 2 · Aprobaciones",null,[
-["📚","fa","DECANATO","Resolución de Consejo de Facultad","Verifican y cargan la resolución; envían oficio al Vicerrectorado.",["Reúne|Expedientes con todos los pasos anteriores completos","Resolución|Se verifica y se carga","Oficio|Se envía al Vicerrectorado Académico"],"rcf"],
-["🔎","au","VICERRECTORADO ACADÉMICO","Revisión del expediente","Verifican que todo esté en orden.",["Recibe|El oficio del Decanato","Revisa|Cada expediente","Todo bien|Oficio al Rectorado para pedir aprobación en Consejo","Observación|Vuelve al Decanato para corregir"]],
-["📨","au","RECTORADO","Recibe el oficio","Lo envía a Secretaría General.",["Recibe|Oficio con expedientes","Envía|A Secretaría General, para el Consejo más próximo"]],
-["🏆","au","SECRETARÍA GENERAL","Consejo Universitario aprueba","Se exponen los expedientes y se aprueban.",["Agenda|Incluyen los expedientes en la agenda","Exposición|Se exponen grados y títulos","Aprobación|Votan los consejeros","Envío|A Grados y Títulos, para resolución y formato de conformidad"]]]],
-["Fase 3 · Se prepara tu diploma",null,[
-["🗂️","gt","OFICINA DE GRADOS Y TÍTULOS","Se arman los datos de tu diploma","Revisan cada documento de tu expediente (12 subpasos).",["Foto|Descargan y editan la fotografía","Convalidación|Si convalidaste se incluye; si no, eres alumno regular","Notas|Del histórico se toman los créditos alcanzados","Primera matrícula|Se toma la fecha exacta","Egresado|Se toma la fecha de egreso","Requisitos|Idioma, CENFOTI, investigación y apto","Consejo de Facultad|Número y fecha de la resolución","Diploma|Número y código que te corresponde","Consejo Univ.|Fecha de aprobación y de la resolución","Autoridades|Validan datos de rector, secretaria y decano","Guardado|Se valida todo y se guarda","Cierre|Pasan a firmas cuando todos los expedientes están listos"]],
-["✍️","gt","GRADOS Y TÍTULOS · RECTORADO","Resoluciones y firmas","Dos tareas en paralelo.",["Resoluciones|Se emiten y van al Rectorado para firma","Impresión|En paralelo se imprimen los diplomas físicos","Decanos|Firman en cada facultad","Secretaria general|Firma el diploma","Rector|Firma final|dip"],"dip"],
-["📧","gt","GRADOS Y TÍTULOS","Te llega la resolución por correo","Y se escanean los diplomas.",["Correo|Resolución firmada digitalmente por el rector|mail","Resolución|Así se verá tu resolución|rcu","Escaneo|Se escanean los diplomas","Portadiplomas|Se guardan y agrupan por facultad"],"mail"]]],
-["Fase 4 · SUNEDU, entrega y condición de bachiller",null,[
-["🏢","su","SECRETARÍA GENERAL → SUNEDU","Registro en SUNEDU","La universidad envía la información por mesa de partes virtual.",["Padrón|Listado de expedientes","Diplomas|Escaneados","Oficio|Firma de la secretaria general|ofi","Envío|Mesa de partes virtual","SUNEDU|10 días hábiles para registrar"],"ofi"],
+["✅","fa","DECANATO","Resolución de declaración de apto","Cargan la resolución que te declara apto.",[],"apto"],
+["📚","fa","DECANATO","Resolución de Consejo de Facultad","Verifican y cargan la resolución. Ojo: antes del Consejo Universitario no hay plazo fijado por SUNEDU.",["Reúne|Expedientes completos","Resolución|Se verifica y se carga","Oficio|Al Vicerrectorado Académico"],"rcf"],
+["🔎","au","VICERRECTORADO ACADÉMICO","Revisión del expediente","Verifican que todo esté en orden.",["Revisa|Cada expediente","Todo bien|Oficio al Rectorado","Observación|Vuelve al Decanato"]],
+["📨","au","RECTORADO","Recibe el oficio","Lo envía a Secretaría General para el Consejo más próximo.",[]],
+["🏆","au","SECRETARÍA GENERAL","Consejo Universitario aprueba","Se exponen los expedientes y los consejeros aprueban.",["Agenda|Se incluyen los expedientes","Exposición|Grados y títulos","Aprobación|Votan los consejeros","Envío|A Grados y Títulos"]],
+["🗂️","gt","OFICINA DE GRADOS Y TÍTULOS","Se arman los datos de tu diploma","Desde la aprobación, la universidad tiene 30 días hábiles para emitir el diploma y enviar la información a SUNEDU.",["Foto|Se descarga y edita","Convalidación|Si convalidaste se incluye","Notas|Créditos alcanzados","Matrícula|Fecha de primera matrícula","Egresado|Fecha de egreso","Requisitos|Idioma, CENFOTI, investigación, apto","Facultad|N.° y fecha de resolución","Diploma|N.° y código","Consejo Univ.|Fecha de aprobación","Autoridades|Rector, secretaria, decano","Guardado|Se valida todo","Cierre|Pasan a firmas"]],
+["✍️","gt","GRADOS Y TÍTULOS · RECTORADO","Resoluciones y firmas","Dos tareas en paralelo.",["Resoluciones|Se emiten y firma el Rectorado","Impresión|Diplomas físicos","Decanos|Firman en su facultad","Secretaria|Firma","Rector|Firma final"],"dip"],
+["📧","gt","GRADOS Y TÍTULOS","Te llega la resolución por correo","Y se escanean los diplomas.",["Correo|Resolución firmada digitalmente","Escaneo|De cada diploma","Portadiplomas|Se agrupan por facultad"],"mail"],
+["🏢","su","SECRETARÍA GENERAL → SUNEDU","Registro en SUNEDU","Envío por mesa de partes virtual.",["Padrón|Listado de expedientes","Diplomas|Escaneados","Oficio|Firma de la secretaria general","SUNEDU|10 días hábiles para registrar"],"ofi"],
 ["📦","fa","DECANATO","Te citan para la entrega","Reciben los diplomas en portadiplomas y te llaman.",[]],
 ["🎓","al","ALUMNO","¡Recibes tu diploma!","Recoges tu diploma de bachiller.",[],"dip"],
-["🏅","gt","OFICINA DE GRADOS Y TÍTULOS · ERP","Pasas de egresante a bachiller","Cuando SUNEDU registra tu diploma, se actualiza tu condición en el ERP.",["SUNEDU|Registra y comunica a la universidad","Verificación|Sin observaciones en tu expediente","ERP|Cambio de egresante a bachiller|erp","Después|Ya puedes solicitar el apto al título profesional"],"erp"]]]];
-
-/* Aplanar pasos */
-const STEPS=[];
-P.forEach(([ph,box,steps])=>{
-  steps.forEach(s=>{
-    STEPS.push({icon:s[0],color:C[s[1]],who:s[2],title:s[3],desc:s[4],subs:s[5]||[],example:s[6]||null,phase:ph});
-  });
-});
-
-/* ==================== ESTADO ==================== */
-const state={step:0,coins:0,playerX:120,walking:false,facing:1,popOpen:false,jumping:false};
-const TOTAL=STEPS.length;
-const BLOCK_W=52, BLOCK_GAP=110, START_X=180;
-const GROUND_H=70;
-const PLAYER_W=44;
-const WORLD_W=START_X + TOTAL*(BLOCK_W+BLOCK_GAP) + 200;
-const BLOCK_Y = 260; /* distancia desde el fondo al bloque */
-
-/* ==================== REFERENCIAS ==================== */
-const strip=document.getElementById('strip');
-const world=document.getElementById('world');
-const player=document.getElementById('player');
-const hudStep=document.getElementById('hudStep');
-const hudCoins=document.getElementById('hudCoins');
-const hudTotal=document.getElementById('hudTotal');
-const progressFill=document.getElementById('progressFill');
-const pop=document.getElementById('pop');
-const hint=document.getElementById('hint');
-const win=document.getElementById('win');
-
-hudTotal.textContent=TOTAL;
-
-/* ==================== CONSTRUIR ESCENARIO ==================== */
-strip.style.width=WORLD_W+'px';
-strip.style.height='100%';
-
-/* Suelo */
-const ground=document.createElement('div');
-ground.className='ground';
-strip.appendChild(ground);
-
-/* Nubes y decoración */
-for(let i=0;i<14;i++){
-  const c=document.createElement('div');
-  c.className='cloud';
-  const w=60+Math.random()*70;
-  c.style.width=w+'px';
-  c.style.height=(w*0.42)+'px';
-  c.style.left=(Math.random()*WORLD_W)+'px';
-  c.style.top=(30+Math.random()*160)+'px';
-  strip.appendChild(c);
-}
-for(let i=0;i<12;i++){
-  const h=document.createElement('div');
-  h.className='hill';
-  h.style.left=(200+Math.random()*(WORLD_W-300))+'px';
-  h.style.width=(120+Math.random()*120)+'px';
-  h.style.height=(80+Math.random()*70)+'px';
-  strip.appendChild(h);
-}
-for(let i=0;i<25;i++){
-  const b=document.createElement('div');
-  b.className='bush';
-  b.style.left=(100+Math.random()*(WORLD_W-200))+'px';
-  strip.appendChild(b);
-}
-
-/* Bloques */
-const blocks=[];
-STEPS.forEach((st,i)=>{
-  const bx=START_X + i*(BLOCK_W+BLOCK_GAP);
-  const by=BLOCK_Y;
-  const el=document.createElement('button');
-  el.className='block';
-  el.style.left=bx+'px';
-  el.style.bottom=by+'px';
-  el.setAttribute('aria-label','Paso '+(i+1)+': '+st.title);
-  el.innerHTML='<span class="q">?</span>';
-  el.dataset.idx=i;
-  el.addEventListener('click',()=>tryHit(i));
-  strip.appendChild(el);
-  blocks.push({el,bx,by,hit:false,done:false,coinEl:null});
-});
-
-/* Personaje */
-player.style.left=state.playerX+'px';
-
-/* ==================== LÓGICA DE MOVIMIENTO ==================== */
-const keys={};
-document.addEventListener('keydown',e=>{
-  if(state.popOpen)return;
-  if(['ArrowLeft','ArrowRight','ArrowUp',' '].includes(e.key)){
-    e.preventDefault();
-    keys[e.key]=true;
-    if(e.key==='ArrowUp'||e.key===' ')jump();
-  }
-  if(e.key==='ArrowLeft'){state.facing=-1;player.style.transform='scaleX(-1)';}
-  if(e.key==='ArrowRight'){state.facing=1;player.style.transform='scaleX(1)';}
-});
-document.addEventListener('keyup',e=>{keys[e.key]=false;});
-
-document.getElementById('btnLeft').addEventListener('pointerdown',()=>{keys.ArrowLeft=true;state.facing=-1;player.style.transform='scaleX(-1)';});
-document.getElementById('btnRight').addEventListener('pointerdown',()=>{keys.ArrowRight=true;state.facing=1;player.style.transform='scaleX(1)';});
-document.getElementById('btnLeft').addEventListener('pointerup',()=>{keys.ArrowLeft=false;});
-document.getElementById('btnRight').addEventListener('pointerup',()=>{keys.ArrowRight=false;});
-document.getElementById('btnLeft').addEventListener('pointerleave',()=>{keys.ArrowLeft=false;});
-document.getElementById('btnRight').addEventListener('pointerleave',()=>{keys.ArrowRight=false;});
-document.getElementById('btnJump').addEventListener('pointerdown',()=>{if(!state.popOpen)jump();});
-
-function jump(){
-  if(state.jumping||state.popOpen)return;
-  state.jumping=true;
-  player.classList.add('hit');
-  /* Verificar colisión con bloque cercano */
-  const px=state.playerX+PLAYER_W/2;
-  let nearest=null,minDist=999;
-  blocks.forEach((b,i)=>{
-    if(b.done)return;
-    const bx=b.bx+BLOCK_W/2;
-    const d=Math.abs(px-bx);
-    if(d<minDist){minDist=d;nearest={b,i};}
-  });
-  if(nearest && minDist<BLOCK_W/2+20){
-    tryHit(nearest.i);
-  }
-  setTimeout(()=>{state.jumping=false;player.classList.remove('hit');},350);
-}
-
-function tryHit(i){
-  const b=blocks[i];
-  if(!b||b.done||b.hit)return;
-  if(i!==state.step){
-    /* Si intenta golpear un bloque que no es el siguiente, avisamos */
-    if(i>state.step){flashHint('Primero completa el paso '+(state.step+1));}
-    return;
-  }
-  b.hit=true;
-  b.el.classList.add('hit');
-  b.el.querySelector('.q').textContent='!';
-  /* Moneda */
-  const coin=document.createElement('div');
-  coin.className='coin';
-  coin.style.left=(b.bx+BLOCK_W/2-13)+'px';
-  coin.style.bottom=(b.by+BLOCK_W+8)+'px';
-  strip.appendChild(coin);
-  b.coinEl=coin;
-  /* Popup */
-  openPop(i);
-  setTimeout(()=>b.el.classList.remove('hit'),350);
-}
-
-/* ==================== POPUP ==================== */
-function openPop(i){
-  const st=STEPS[i];
-  state.popOpen=true;
-  pop.querySelector('.card').style.setProperty('--c',st.color);
-  document.getElementById('popNum').textContent='Paso '+(i+1)+' de '+TOTAL;
-  const whoEl=document.getElementById('popWho');
-  whoEl.textContent=st.who;
-  whoEl.style.background=st.color;
-  document.getElementById('popTitle').textContent=st.title;
-  document.getElementById('popDesc').textContent=st.desc;
-  const det=document.getElementById('popDetail');
-  det.innerHTML='';
-  if(st.subs.length){
-    st.subs.forEach(s=>{
-      const [a,b]=s.split('|');
-      const d=document.createElement('div');
-      d.className='sub';
-      d.style.setProperty('--c',st.color);
-      d.innerHTML='<b>'+a+'</b><span>'+b+'</span>';
-      det.appendChild(d);
-    });
-  }
-  const ex=document.getElementById('popExample');
-  if(st.example && EX[st.example]){
-    ex.hidden=false;
-    ex.innerHTML='<b>'+EX[st.example].t+'</b>'+EX[st.example].b;
-  } else {
-    ex.hidden=true;ex.innerHTML='';
-  }
-  pop.classList.add('on');
-  document.getElementById('popNext').focus();
-}
-
-function closePop(collect){
-  pop.classList.remove('on');
-  state.popOpen=false;
-  if(collect){
-    const b=blocks[state.step];
-    if(b && b.coinEl){
-      b.coinEl.classList.add('pop');
-      const coin=b.coinEl;
-      setTimeout(()=>coin.remove(),700);
-      b.coinEl=null;
-    }
-    b.done=true;
-    b.el.classList.add('done');
-    b.el.querySelector('.q').textContent='✓';
-    state.coins++;
-    hudCoins.textContent=state.coins;
-    state.step++;
-    hudStep.textContent=Math.min(state.step+1,TOTAL);
-    progressFill.style.width=(state.step/TOTAL*100)+'%';
-    /* Avanzar al personaje hasta el siguiente bloque */
-    if(state.step<TOTAL){
-      const nextB=blocks[state.step];
-      const targetX=nextB.bx - 20;
-      animateWalkTo(targetX);
-      setTimeout(()=>flashHint('Golpea el siguiente cubo con ↑ o Espacio'),600);
-    } else {
-      showWin();
-    }
-  }
-}
-
-document.getElementById('popClose').addEventListener('click',()=>closePop(false));
-document.getElementById('popNext').addEventListener('click',()=>closePop(true));
-
-/* ==================== ANIMACIÓN DE CAMINATA ==================== */
-let walkTimer=null;
-function animateWalkTo(targetX){
-  if(walkTimer)clearInterval(walkTimer);
-  player.classList.add('walk');
-  const speed=6;
-  walkTimer=setInterval(()=>{
-    const diff=targetX-state.playerX;
-    if(Math.abs(diff)<speed){
-      state.playerX=targetX;
-      player.style.left=state.playerX+'px';
-      player.classList.remove('walk');
-      clearInterval(walkTimer);walkTimer=null;
-      return;
-    }
-    state.playerX+=Math.sign(diff)*speed;
-    player.style.left=state.playerX+'px';
-    world.scrollLeft=Math.max(0,state.playerX-world.clientWidth/2);
-  },16);
-}
-
-/* ==================== LOOP DE MOVIMIENTO ==================== */
-function loop(){
-  if(!state.popOpen && !walkTimer){
-    let moved=false;
-    if(keys.ArrowLeft){
-      state.playerX=Math.max(20,state.playerX-4);
-      moved=true;
-    }
-    if(keys.ArrowRight){
-      state.playerX=Math.min(WORLD_W-PLAYER_W-20,state.playerX+4);
-      moved=true;
-    }
-    if(moved){
-      player.style.left=state.playerX+'px';
-      player.classList.add('walk');
-      /* Auto-scroll */
-      const camX=state.playerX-world.clientWidth/2;
-      world.scrollLeft=Math.max(0,camX);
-    } else {
-      player.classList.remove('walk');
-    }
-  }
-  requestAnimationFrame(loop);
-}
-requestAnimationFrame(loop);
-
-/* ==================== HINT FLOTANTE ==================== */
-let hintTimer=null;
-function flashHint(msg){
-  hint.textContent=msg;
-  hint.classList.add('on');
-  clearTimeout(hintTimer);
-  hintTimer=setTimeout(()=>hint.classList.remove('on'),2600);
-}
-setTimeout(()=>flashHint('Usa ← → para caminar · ↑ o Espacio para saltar y golpear el cubo'),800);
-
-/* ==================== VICTORIA ==================== */
-function showWin(){
-  document.getElementById('winSteps').textContent=TOTAL;
-  document.getElementById('winCoins').textContent=state.coins;
-  win.classList.add('on');
-}
-document.getElementById('winRestart').addEventListener('click',()=>location.reload());
-
-/* Inicializar primer bloque accesible */
-progressFill.style.width='0%';
+["🏅","gt","GRADOS Y TÍTULOS · ERP","Pasas de egresante a bachiller","Cuando SUNEDU registra tu diploma, se actualiza tu condición en el ERP. Sin ella no puedes pedir el apto al título.",["SUNEDU|Registra y comunica","Verificación|Sin observaciones","ERP|De egresante a bachiller","Después|Solicitas el apto al título"],"erp"]];
+const N=S.length,G=330,SEG=340,$=i=>document.getElementById(i),cv=$("cv"),ctx=cv.getContext("2d");
+let Wl,Hl,sc;
+function rs(){sc=innerHeight/400;Wl=innerWidth/sc;Hl=400;if(Wl<560){sc=innerWidth/560;Wl=560;Hl=innerHeight/sc}cv.width=Math.round(Wl);cv.height=Math.round(Hl)}
+addEventListener("resize",rs);rs();
+const mk=(a,b)=>{const t=document.createElement("canvas");t.width=t.height=28;const g=t.getContext("2d");g.fillStyle=a;g.fillRect(0,0,28,28);g.fillStyle=b;g.fillRect(0,13,28,2);g.fillRect(0,26,28,2);g.fillRect(13,0,2,14);g.fillRect(6,14,2,14);g.fillRect(20,14,2,14);return ctx.createPattern(t,"repeat")};
+const brk=mk("#b5651d","#7a3f0d"),brk2=mk("#e0883a","#8a4510"),brk3=mk("#2a4a8f","#16306a");
+/* Nivel */
+let solids=[],qs=[],ens=[],coinsL=[];let cx=0;
+const gr=(x,w)=>solids.push({x,y:G,w,h:120,t:"g"});
+gr(0,420);cx=420;
+S.forEach((s,i)=>{const t=i%4,q=x=>{const b={x,y:G-130,w:36,h:36,t:"q",i,cx,bump:0,used:false};solids.push(b);qs.push(b)},co=(x,y)=>coinsL.push({x,y,got:false});
+ if(s[5].length){gr(cx,SEG);solids.push({x:cx+80,y:G-70,w:48,h:70,t:"p",en:i},{x:cx+200,y:G-900,w:30,h:900,t:"w"},{x:cx+260,y:G-70,w:48,h:70,t:"p",ex:i});co(cx+20,G-40)}else if(t==0){gr(cx,SEG);q(cx+150);co(cx+60,G-40);co(cx+90,G-40)}
+ else if(t==1){gr(cx,120);gr(cx+230,110);q(cx+250);[0,1,2].forEach(k=>co(cx+140+k*30,G-80-Math.sin(k*1.57)*25))}
+ else if(t==2){gr(cx,100);gr(cx+250,90);solids.push({x:cx+145,y:G-60,w:60,h:18,t:"b"});q(cx+270);[0,1,2].forEach(k=>co(cx+150+k*25,G-95))}
+ else{gr(cx,SEG);solids.push({x:cx+200,y:G-50,w:44,h:50,t:"p"});ens.push({x:cx+70,y:G-26,w:28,h:26,vx:-.8,a:cx+30,b:cx+180,al:true});q(cx+290)}
+ cx+=SEG});
+const endX=cx+100;let LW=cx+700;gr(cx,700);solids.push({x:endX,y:G-30,w:240,h:30,t:"s"});
+/* Estado */
+const p={x:80,y:G-34,w:24,h:34,vx:0,vy:0,on:false,f:1,inv:0};
+let zone="o",sv,us=0,ui=0,ux=0,hs=-1,big=false,step=0,coins=0,lives=3,paused=false,mode="play",cp=80,tick=0,gt=0,cur=null,keys={},jl=false,cf=[],camX=0,won=false;
+const ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
+let ac;const bp=(f,d=.1,ty="square")=>{try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}};
+let ht;const hint=m=>{const h=$("hint");h.textContent=m;h.classList.add("on");clearTimeout(ht);ht=setTimeout(()=>h.classList.remove("on"),2800)};
+/* Controles */
+const set=(k,v)=>{keys[k]=v;if(k=="j"&&!v)jl=false};
+const KM={ArrowLeft:"l",a:"l",A:"l",ArrowRight:"r",d:"r",D:"r",ArrowUp:"j",w:"j",W:"j"," ":"j",ArrowDown:"dn",s:"dn",S:"dn"};
+addEventListener("keydown",e=>{const k=KM[e.key];if(k){e.preventDefault();if(!paused)set(k,true)}});
+addEventListener("keyup",e=>{const k=KM[e.key];if(k)set(k,false)});
+[["bl","l"],["br","r"],["bd","dn"],["bj","j"]].forEach(([id,k])=>{const b=$(id);b.addEventListener("pointerdown",e=>{e.preventDefault();if(!paused)set(k,true)});["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>set(k,false)))});
+/* Popup de paso */
+function openStep(i,b){paused=true;keys={};const s=S[i];$("pc").style.borderTopColor=C[s[1]];$("pn").textContent="PASO "+(i+1)+" DE "+N;const w=$("pw");w.textContent=s[2];w.style.background=C[s[1]];
+ $("pt").textContent=s[0]+" "+s[3];$("pd").textContent=s[4];
+ $("ps").innerHTML=s[5].map((x,k)=>{const[a,c]=x.split("|");return'<div class="sub"><i>'+(k+1)+"</i><b>"+a+"</b><span>"+c+"</span></div>"}).join("");
+ const e=EX[s[6]],pe=$("pe");pe.hidden=!e;if(e)pe.innerHTML="<b>👁 Así se ve: "+e[0]+"</b>"+e[1]+'<div style="color:#888;font-size:11px;margin-top:4px">Ejemplo referencial; el formato real puede variar.</div>';
+ $("pop").classList.add("on");cur=b;bp(660,.15)}
+$("pb").onclick=()=>{$("pop").classList.remove("on");paused=false;if(!cur)return;cur.used=true;bp(880,.2);coins++;if(cur.sub){us++;if(us==S[ui][5].length)hint("¡Listo! Camina a la derecha y entra al tubo para subir →");return}step++;cp=cur.cx+SEG-30;donePhase(step-1);if(step==N)hint("¡Todos los pasos! Camina hacia el estrado de graduación →")};
+function bump(b){b.bump=8;bp(300,.08);if(b.used)return;if(b.sub){if(b.i!=us)hint("Golpea los cubos en orden: el "+(us+1));else openSub(b);return}if(b.i!=step){hint(b.i>step?"Primero golpea el cubo del paso "+(step+1):"");return}openStep(b.i,b)}
+function die(f){if(p.inv>0||p.star>0||mode!="play")return;if(big&&!f){big=false;p.y+=10;p.h=34;p.w=24;p.inv=90;bp(200,.3);hint("¡Ay! Volviste a tu tamaño normal");return}lives--;bp(160,.4,"sawtooth");if(lives<=0){lives=3;hint("¡Sin vidas! Vuelves al último punto con 3 vidas")}else hint("¡Cuidado! Te quedan "+lives+" vidas");p.x=cp;p.y=G-p.h-2;p.vx=p.vy=0;p.inv=90;ens.forEach(e=>e.al=true)}
+const its=[];
+function pow(k){bp(990,.3);if(k==0){if(!big){big=true;p.y-=10;p.h=44;p.w=31}hint("¡Creciste! Ahora aguantas un golpe")}else if(k==1){p.star=600;hint("¡Invencible 10 segundos! Choca con los enemigos")}else{lives+=2;hint("¡+2 vidas!")}}
+function donePhase(i){const k=[9,13,16].indexOf(i);if(k<0)return;its.push({x:p.x+30,y:G-140,vy:0,k,al:true});hint(["¡Fase 1 completa! Recoge el 🍄 para crecer","¡Fase 2 completa! Recoge la ⭐ invencible","¡Fase 3 completa! Recoge el 💚 +2 vidas"][k])}
+function fade(f){const e=$("fd");paused=true;keys={};e.style.opacity=1;setTimeout(()=>{f();e.style.opacity=0},350)}
+function enter(i){fade(()=>{const s=S[i],n=s[5].length,W=520+n*120;sv={solids,qs,ens,coinsL,LW};zone="u";us=0;ui=i;solids=[{x:-60,y:G,w:W+120,h:120,t:"f"},{x:-60,y:G-190,w:W+120,h:60,t:"c"},{x:-60,y:G-190,w:60,h:320,t:"c"}];qs=[];ens=[];coinsL=[];s[5].forEach((x,k)=>{const b={x:200+k*120,y:G-130,w:36,h:36,t:"q",i:k,bump:0,used:false,sub:1};solids.push(b);qs.push(b)});LW=W;ux=W-70;p.x=40;p.y=G-p.h-2;p.vx=p.vy=0;openStep(i,null)})}
+function leave(){fade(()=>{const i=ui;({solids,qs,ens,coinsL,LW}=sv);zone="o";const s=solids.find(s=>s.ex===i);p.x=s.x+(s.w-p.w)/2;p.y=s.y-p.h;p.vx=p.vy=0;step++;coins++;cp=s.x+50;donePhase(i);paused=false;hint(step==N?"¡Todos los pasos! Camina hacia el estrado de graduación →":"¡Subproceso completo! Sigue avanzando →")})}
+function openSub(b){paused=true;keys={};const s=S[ui],[a,c]=s[5][b.i].split("|");$("pc").style.borderTopColor=C[s[1]];$("pn").textContent="SUBPASO "+(b.i+1)+" DE "+s[5].length+" · PASO "+(ui+1);const w=$("pw");w.textContent=s[2];w.style.background=C[s[1]];$("pt").textContent="🔹 "+a;$("pd").textContent=c;$("ps").innerHTML="";$("pe").hidden=true;$("pop").classList.add("on");cur=b;bp(660,.15)}
+function finish(){mode="grad";gt=0;keys={};p.x=endX+110;p.y=G-30-p.h;p.vx=p.vy=0;p.f=1;for(let i=0;i<180;i++)cf.push({x:endX+Math.random()*260,y:-Math.random()*300,vx:(Math.random()-.5)*2,vy:1+Math.random()*2,c:["#e8a900","#d6243f","#1f5fa8","#4cb731","#fff"][i%5]});bp(880,.4)}
+/* Física */
+function upd(){if(paused)return;tick++;
+ if(mode=="grad"){gt++;cf.forEach(c=>{c.y+=c.vy;c.x+=c.vx+Math.sin(c.y*.05);if(c.y>G+30)c.y=-20});if(gt==110&&!won){won=true;$("ws").textContent=N;$("wc").textContent=coins;$("win").classList.add("on")}return}
+ if(keys.l){p.vx-=.5;p.f=-1}else if(keys.r){p.vx+=.5;p.f=1}else p.vx*=.8;
+ p.vx=Math.max(-4,Math.min(4,p.vx));if(Math.abs(p.vx)<.1&&!keys.l&&!keys.r)p.vx=0;
+ if(keys.j&&p.on&&!jl){p.vy=-11;jl=true;bp(520,.12)}
+ p.vy=Math.min(14,p.vy+((p.vy<0&&!keys.j)?1.4:.6));
+ p.x+=p.vx;if(p.x<0){p.x=0;p.vx=0}
+ for(const s of solids)if(ov(p,s)){if(p.vx>0)p.x=s.x-p.w;else if(p.vx<0)p.x=s.x+s.w;p.vx=0}
+ p.y+=p.vy;p.on=false;
+ for(const s of solids)if(ov(p,s)){if(p.vy>0){p.y=s.y-p.h;p.on=true}else if(p.vy<0){p.y=s.y+s.h;if(s.t=="q")bump(s)}p.vy=0}
+ if(p.y>G+160)die(1);if(p.inv>0)p.inv--;if(p.star>0)p.star--;
+ if(zone=="o"&&p.on){const s=solids.find(s=>s.en!=null&&p.y+p.h==s.y&&p.x+p.w>s.x+8&&p.x<s.x+s.w-8);if(s&&s.en==step){if(keys.dn)enter(step);else if(hs!=step){hs=step;hint("Presiona ▼ (o ↓ / S) para entrar al tubo")}}}
+ if(zone=="u"&&p.x>ux-30){if(us<S[ui][5].length){p.x=ux-30;p.vx=0;hint("Completa los subpasos: golpea los cubos ? en orden")}else leave()}
+ if(zone=="o")its.forEach(t=>{if(!t.al)return;t.vy=Math.min(8,t.vy+.5);t.y+=t.vy;const r={x:t.x,y:t.y,w:26,h:26};for(const s of solids)if(ov(r,s)&&t.vy>0){t.y=s.y-26;t.vy=0}if(ov(p,{x:t.x,y:t.y,w:26,h:26})){t.al=false;pow(t.k)}});
+ qs.forEach(b=>{if(b.bump>0)b.bump--});
+ ens.forEach(e=>{if(!e.al)return;e.x+=e.vx;if(e.x<e.a||e.x>e.b)e.vx*=-1;if(ov(p,e)){if(p.vy>0&&p.y+p.h-e.y<16){e.al=false;p.vy=-8;bp(400,.1)}else if(p.star>0){e.al=false;bp(400,.1)}else die()}});
+ coinsL.forEach(c=>{if(!c.got&&Math.abs(p.x+12-c.x)<18&&Math.abs(p.y+17-c.y)<22){c.got=true;coins++;bp(990,.08)}});
+ if(p.x>endX-40){if(step<N){p.x=endX-40;p.vx=0;hint("Aún te faltan pasos: vuelve a golpear los cubos ?")}else finish()}
+ $("h1").textContent="❤️×"+lives+"  🪙"+coins+"  PASO "+Math.min(step+1,N)+"/"+N+(big?" 🍄":"")+(p.star>0?" ⭐":"")}
+/* Dibujo */
+function player(x,y,g){ctx.save();ctx.translate(x+p.w/2,y);const B=p.h/34;ctx.scale(p.f*B,B);if(p.star>0&&tick%6<3)ctx.filter="hue-rotate("+(tick*20%360)+"deg) brightness(1.4)";
+ const lw=p.on&&Math.abs(p.vx)>.3?Math.sin(tick*.5)*4:0,sk="#f3c28a";
+ if(g){ctx.fillStyle="#111";ctx.fillRect(-13,16,26,18);ctx.fillStyle="#fff";ctx.fillRect(-4,16,8,5);ctx.fillStyle="#e8a900";ctx.fillRect(-2,16,4,18);
+  ctx.fillStyle="#222";ctx.fillRect(-9,33,8,3);ctx.fillRect(1,33,8,3);ctx.fillStyle="#111";ctx.fillRect(9,13,5,10);
+  ctx.fillStyle=sk;ctx.fillRect(-9,6,18,11);ctx.fillStyle="#000";ctx.fillRect(3,10,3,3);
+  ctx.fillStyle="#111";ctx.fillRect(-15,0,30,4);ctx.fillRect(-9,3,18,5);ctx.fillStyle="#e8a900";ctx.fillRect(13,2,2,10);ctx.fillRect(12,11,4,4);
+  ctx.fillStyle="#fff";ctx.fillRect(12,8,16,6);ctx.fillStyle="#d6243f";ctx.fillRect(18,8,3,6)}
+ else{if(p.inv>0&&tick%6<3)ctx.globalAlpha=.4;
+  ctx.fillStyle="#d6243f";ctx.fillRect(-12,0,24,8);ctx.fillRect(0,6,16,4);ctx.fillStyle=sk;ctx.fillRect(-9,8,18,10);ctx.fillStyle="#000";ctx.fillRect(3,11,3,3);ctx.fillRect(2,16,8,2);
+  ctx.fillStyle="#1f5fa8";ctx.fillRect(-11,18,22,10);ctx.fillStyle="#d6243f";ctx.fillRect(-14,19,4,8);ctx.fillRect(10,19,4,8);
+  ctx.fillStyle="#5a3a1a";ctx.fillRect(-9+lw,28,8,6);ctx.fillRect(1-lw,28,8,6)}
+ ctx.restore()}
+function draw(){const W=cv.width,H=cv.height,oy=H-400,U=zone=="u";
+ const sk=ctx.createLinearGradient(0,0,0,H);sk.addColorStop(0,"#4a86f0");sk.addColorStop(1,"#bfe0ff");ctx.fillStyle=U?"#0b0f24":sk;ctx.fillRect(0,0,W,H);
+ camX=Math.max(0,Math.min(LW-W,p.x-W*.4));
+ ctx.fillStyle="#fff";if(!U)for(let k=0;k<14;k++){const x=((k*230-camX*.3)%(W+260)+W+260)%(W+260)-130,y=oy+30+(k*53)%110;[0,22,44].forEach((d,j)=>{ctx.beginPath();ctx.arc(x+d,y+(j==1?-8:0),16+(j==1?6:0),0,7);ctx.fill()})}
+ ctx.fillStyle="#6dbb4a";if(!U)for(let k=0;k<8;k++){const x=((k*340-camX*.5)%(W+400)+W+400)%(W+400)-200;ctx.beginPath();ctx.arc(x,G+oy,70+(k%3)*20,Math.PI,0);ctx.fill()}
+ ctx.save();ctx.translate(-Math.round(camX),oy);
+ solids.forEach(s=>{if(s.x>camX+W||s.x+s.w<camX)return;
+  if(s.t=="g"){ctx.fillStyle=brk;ctx.fillRect(s.x,s.y,s.w,400);ctx.fillStyle="#4cb731";ctx.fillRect(s.x,s.y,s.w,8);ctx.fillStyle="#2f8a1f";ctx.fillRect(s.x,s.y+8,s.w,3)}
+  else if(s.t=="b"){ctx.fillStyle=brk2;ctx.fillRect(s.x,s.y,s.w,s.h)}
+  else if(s.t=="f"||s.t=="c"){ctx.fillStyle=brk3;ctx.fillRect(s.x,s.y,s.w,s.h)}
+  else if(s.t=="w"){ctx.fillStyle="#444";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle="#666";ctx.fillRect(s.x+4,s.y,6,s.h);ctx.font="20px sans-serif";ctx.fillText("🔒",s.x+4,G-90)}
+  else if(s.t=="p"){ctx.fillStyle="#2ea84a";ctx.fillRect(s.x+4,s.y+10,s.w-8,s.h-10);ctx.fillStyle="#1f7a35";ctx.fillRect(s.x,s.y,s.w,12);if(s.en===step){ctx.fillStyle="#fff";ctx.font="16px sans-serif";ctx.fillText("▼",s.x+16,s.y-8-Math.abs(Math.sin(tick*.1))*6)}}
+  else if(s.t=="s"){ctx.fillStyle="#0a2e6e";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle="#e8a900";ctx.fillRect(s.x,s.y,s.w,6);ctx.fillStyle="#fff";ctx.font="10px 'Press Start 2P',monospace";ctx.fillText("UAC",s.x+90,s.y+22)}
+  else if(s.t=="q"){const o=s.bump>0?-Math.sin(s.bump/8*Math.PI)*8:0;ctx.fillStyle=s.used?"#9c7a4a":"#f2b705";ctx.fillRect(s.x,s.y+o,s.w,s.h);ctx.strokeStyle="#7a5300";ctx.lineWidth=3;ctx.strokeRect(s.x+1,s.y+o+1,s.w-2,s.h-2);
+   ctx.fillStyle=s.used?"#6b5330":"#7a5300";ctx.font="bold 22px monospace";ctx.textAlign="center";ctx.fillText(s.used?"✓":"?",s.x+18,s.y+o+27);ctx.font="8px 'Press Start 2P',monospace";ctx.fillStyle="#fff";ctx.fillText(""+(s.i+1),s.x+18,s.y-6);ctx.textAlign="left"}});
+ ctx.fillStyle="#fff";ctx.font="9px 'Press Start 2P',monospace";if(U){ctx.fillStyle="#2ea84a";ctx.fillRect(ux-20,G-64,70,64);ctx.fillStyle="#1f7a35";ctx.fillRect(ux-28,G-70,14,76);ctx.fillStyle="#fff";ctx.fillText("SALIDA ►",ux-90,G-80)}else ctx.fillText("INICIO ►",60,G-20);
+ ctx.fillStyle="#7a5a2a";ctx.fillRect(endX+10,G-150,6,120);ctx.fillRect(endX+224,G-150,6,120);ctx.fillStyle="#d6243f";ctx.fillRect(endX+16,G-150,208,34);ctx.fillStyle="#fff";ctx.font="10px 'Press Start 2P',monospace";ctx.fillText("¡BACHILLER!",endX+48,G-128);
+ coinsL.forEach(c=>{if(c.got)return;const w=Math.abs(Math.cos(tick*.1))*8+2;ctx.fillStyle="#ffce56";ctx.beginPath();ctx.ellipse(c.x,c.y,w,9,0,0,7);ctx.fill();ctx.strokeStyle="#b98600";ctx.lineWidth=2;ctx.stroke()});
+ ens.forEach(e=>{if(!e.al)return;ctx.fillStyle="#8b4513";ctx.beginPath();ctx.ellipse(e.x+14,e.y+12,15,13,0,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(e.x+6,e.y+7,6,6);ctx.fillRect(e.x+16,e.y+7,6,6);ctx.fillStyle="#000";ctx.fillRect(e.x+8,e.y+9,3,3);ctx.fillRect(e.x+18,e.y+9,3,3);ctx.fillRect(e.x+5,e.y+4,8,2);ctx.fillRect(e.x+15,e.y+4,8,2);ctx.fillStyle="#3b1f0a";ctx.fillRect(e.x+2,e.y+22,10,4);ctx.fillRect(e.x+16,e.y+22,10,4)});
+ its.forEach(t=>{if(t.al){ctx.font="26px sans-serif";ctx.fillText(["🍄","⭐","💚"][t.k],t.x,t.y+24)}});player(p.x,p.y+(mode=="grad"?-Math.abs(Math.sin(gt*.12))*14:0),mode=="grad");
+ cf.forEach(c=>{ctx.fillStyle=c.c;ctx.fillRect(c.x,c.y,5,5)});
+ ctx.restore()}
+let last=0,acc=0;
+function frame(t){const dt=Math.min(100,t-last);last=t;acc+=dt;while(acc>=16.67){upd();acc-=16.67}draw();requestAnimationFrame(frame)}
+requestAnimationFrame(frame);
+hint("◀ ▶ caminar · ▲ o Espacio saltar · golpea los cubos ? por orden");
 </script>
 </body>
 </html>
-
-puedes mejorar este juego por favor, hacerlo al estilo de mari bross, arregla todas las fallas y mejora todo al respecto, ponle pruebas para saltar, barrancos y al final el logro que aparezca con su toga y su diploma en la mano y un pop up de felicitaciones
