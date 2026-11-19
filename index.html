@@ -33,7 +33,7 @@ canvas{display:block;width:100vw;height:100vh;image-rendering:pixelated}
 <div id="hud"><span>UAC · BACHILLERATO</span><span id="h1"></span></div>
 <div id="hint"></div>
 <div id="ctl"><div><button id="bl">◀</button><button id="br">▶</button></div><div><button id="bd">▼</button><button id="bj">▲</button></div></div>
-<div id="pop" role="dialog" aria-modal="true"><div class="card" id="pc"><span class="num" id="pn"></span><span class="who" id="pw"></span><h2 id="pt"></h2><p id="pd"></p><div id="ps"></div><div class="ex" id="pe" hidden></div><div style="text-align:right"><button class="btn" id="pb">¡Entendido! ▶</button></div></div></div>
+<div id="pop" role="dialog" aria-modal="true"><div class="card" id="pc"><span class="num" id="pn"></span><span class="who" id="pw"></span><h2 id="pt"></h2><p id="pd"></p><div id="ps"></div><div class="ex" id="pe" hidden></div><div style="text-align:right"><button class="btn" id="pb">¡Entendido! ▶ (Enter)</button></div></div></div>
 <div id="win" role="dialog" aria-modal="true"><div class="card"><div style="font-size:3rem">🎓</div><h2>¡FELICITACIONES, BACHILLER!</h2><p>Superaste los barrancos, esquivaste las observaciones y completaste todos los pasos. Ya puedes solicitar el apto al título profesional.</p><div class="st"><span>📋 <b id="ws"></b> pasos</span><span>🪙 <b id="wc"></b> monedas</span></div><button class="btn" onclick="location.reload()">Jugar de nuevo</button></div></div>
 <script>
 const C={al:"#d6243f",fa:"#1f5fa8",un:"#7a4fb0",au:"#c26a00",gt:"#1f8a55",su:"#3a3f4b"};
@@ -69,18 +69,47 @@ const S=[
 ["📦","fa","DECANATO","Te citan para la entrega","Reciben los diplomas en portadiplomas y te llaman.",[]],
 ["🎓","al","ALUMNO","¡Recibes tu diploma!","Recoges tu diploma de bachiller.",[],"dip"],
 ["🏅","gt","GRADOS Y TÍTULOS · ERP","Pasas de egresante a bachiller","Cuando SUNEDU registra tu diploma, se actualiza tu condición en el ERP. Sin ella no puedes pedir el apto al título.",["SUNEDU|Registra y comunica","Verificación|Sin observaciones","ERP|De egresante a bachiller","Después|Solicitas el apto al título"],"erp"]];
+const LD=["Es el primer paso: presentas tu solicitud de bachillerato desde el sistema de la universidad. Con ella se abre tu expediente, que irá pasando por varias oficinas hasta convertirse en tu diploma. Revisa que tus datos estén correctos antes de enviarla.",
+"Debes subir una fotografía para tu diploma: fondo blanco, terno oscuro y formato JPG. La Oficina de Grados y Títulos la edita y se imprime en tu diploma, así que conviene que sea nítida, de frente y con el rostro despejado. Una foto que no cumpla puede ser observada.",
+"El Centro de Idiomas revisa que cumplas el requisito de idioma: un idioma extranjero o una lengua nativa. Si ya tienes tu certificado, asegúrate de que esté completo y legible; esta validación es necesaria para que el expediente continúe.",
+"La Unidad de Tesorería valida que no tengas deudas económicas con la universidad. Si tuvieras alguna, debes regularizarla; mientras exista una deuda, el expediente no puede avanzar a las siguientes validaciones.",
+"El Decanato de tu facultad verifica que no tengas deudas administrativas pendientes y, si todo está en orden, emite tu constancia. Esa constancia confirma que estás al día con tu facultad.",
+"La Unidad de Procesos Técnicos Académicos carga tu constancia de primera matrícula, que indica la fecha exacta en que te matriculaste por primera vez. Ese dato se escribirá después en tu diploma, por eso es importante que sea correcto.",
+"La misma unidad carga tu constancia de egresado, que certifica que concluiste tus estudios y la fecha en que lo hiciste. Esa fecha también se registra en los datos de tu diploma.",
+"Se valida tu certificado del Centro de Formación en Tecnologías de Información (CENFOTI). Es requisito para todas las escuelas, excepto Ingeniería de Sistemas. Verifica que tu certificado esté cargado si tu escuela lo exige.",
+"El Decanato valida que hayas aprobado el curso de Trabajo de Investigación, requisito académico para el bachillerato. Si tu historial lo muestra aprobado, este paso es una verificación.",
+"El Decanato carga la resolución que te declara apto para obtener el grado de bachiller. Con ella tu facultad confirma que cumpliste los requisitos anteriores. Al completar este paso termina la fase de requisitos.",
+"Tu facultad verifica y carga la resolución de Consejo de Facultad. Luego envía un oficio al Vicerrectorado Académico con uno o más expedientes que ya tienen todos los pasos anteriores completos. Ojo: desde aquí hasta la aprobación en Consejo Universitario no existe plazo fijado por SUNEDU.",
+"El Vicerrectorado Académico recibe el oficio de la facultad y revisa cada expediente. Si todos son correctos, envía un oficio al Rectorado para pedir su aprobación en Consejo Universitario; si encuentra una observación, devuelve el expediente al Decanato para corregirlo.",
+"El Rectorado recibe el oficio con los expedientes y lo envía a Secretaría General para incluirlo en la agenda del Consejo Universitario más próximo. Es un trámite entre oficinas y no requiere acción de tu parte.",
+"Secretaría General incluye los expedientes en la agenda del Consejo Universitario, se exponen y los consejeros los aprueban. Luego envía los expedientes aprobados a la Oficina de Grados y Títulos para emitir la resolución y el formato de conformidad. Es un hito clave: desde esta aprobación corren 30 días hábiles.",
+"Con el expediente aprobado, la Oficina de Grados y Títulos prepara los datos que irán en tu diploma, revisando documento por documento. Desde la aprobación en Consejo Universitario, la universidad tiene 30 días hábiles para emitir el diploma y enviar la información a SUNEDU. Dentro verás los 12 subpasos.",
+"Cuando todos los expedientes aprobados están guardados, se emiten las resoluciones de Consejo Universitario y los diplomas físicos. Ambos pasan por las firmas de las autoridades: la resolución la firma el Rectorado y el diploma lo firman el decano o director, la secretaria general y el rector.",
+"Con las firmas completas, recibes por correo la resolución del Consejo Universitario firmada digitalmente por el rector. En paralelo se escanean los diplomas para el registro en SUNEDU y se guardan en portadiplomas agrupados por facultad. Revisa tu bandeja de entrada y tu spam.",
+"La universidad envía a SUNEDU un padrón con el listado de expedientes, los diplomas escaneados y un oficio de Secretaría General, todo por mesa de partes virtual. SUNEDU tiene 10 días hábiles para registrarlos en su base de datos.",
+"El Decanato recibe los diplomas físicos en el portadiploma y te cita para la entrega. Mantente atento a los medios de comunicación de tu facultad y consulta con ella qué debes presentar ese día.",
+"Recepcionas tu diploma de bachiller. Guárdalo en un lugar seguro: es el documento oficial de tu grado.",
+"Cuando SUNEDU registra tu diploma y lo comunica, la universidad cambia tu condición de egresante a bachiller en el ERP. Se hace al final, cuando no hay observaciones. Esa condición es indispensable para solicitar el apto al título profesional."],
+SD={"10.0":"La facultad junta uno o más expedientes de bachillerato que ya tienen completos todos los pasos anteriores, para enviarlos juntos al Vicerrectorado.","10.1":"Se verifica la resolución de Consejo de Facultad y se carga al expediente. De ella se toman el número y la fecha, que luego aparecen en los datos de tu diploma.","10.2":"La facultad envía un oficio al Vicerrectorado Académico adjuntando los expedientes, para que los revise y, si corresponde, los apruebe.",
+"11.0":"El Vicerrectorado revisa cada expediente que llegó con el oficio de la facultad, verificando que todos los pasos anteriores estén completos y correctos.","11.1":"Si todos los expedientes están correctos, el Vicerrectorado envía un oficio al Rectorado solicitando que se aprueben en Consejo Universitario.","11.2":"Si hay una observación en algún expediente, se devuelve al Decanato de la facultad para que se corrija y luego vuelva a enviarse.",
+"13.0":"Secretaría General incluye los expedientes en la agenda del Consejo Universitario más próximo. El tiempo depende de la fecha de ese Consejo.","13.1":"En la sesión del Consejo Universitario se exponen los expedientes de grados y títulos.","13.2":"Los consejeros universitarios aprueban los expedientes. Desde esta aprobación la universidad tiene 30 días hábiles para emitir el diploma y enviar la información a SUNEDU.","13.3":"Secretaría General envía los expedientes aprobados a la Oficina de Grados y Títulos, que emitirá la resolución y el formato de conformidad.",
+"14.0":"La oficina descarga la fotografía de cada expediente y la edita para el diploma. Por eso debe cumplir las condiciones pedidas al inicio.","14.1":"Se abre el documento de convalidaciones. Si convalidaste cursos, se incluye en los datos del diploma; si no, se registra que eres alumno regular.","14.2":"Se revisa el histórico de notas para obtener el total de créditos que alcanzaste, que se incluye en los datos del diploma.","14.3":"Se verifica la constancia de primera matrícula y se toma la fecha exacta. Si convalidaste, se revisa la constancia de la escuela de origen (convalidación interna) o de la universidad de origen (externa).","14.4":"Se verifica la constancia de egresado y se toma su fecha para los datos del diploma.","14.5":"Se comprueba que las unidades anteriores subieron bien tu certificado de idioma, el de CENFOTI, el curso de Trabajo de Investigación y la resolución de apto. Si todo es correcto, se continúa.","14.6":"Se verifica la resolución de Consejo de Facultad y se toman su número y su fecha.","14.7":"Se indica el número de diploma que tiene tu expediente y el código de diploma que te corresponde.","14.8":"Se registran la fecha del Consejo Universitario que aprobó tu expediente y la fecha de emisión de su resolución.","14.9":"Se validan los datos del rector, de la secretaria general y del decano o director que corresponda.","14.10":"Con todos los datos validados, se guarda la información del expediente.","14.11":"Cuando todos los expedientes aprobados por el Consejo Universitario están guardados, la oficina pasa a emitir las resoluciones y los diplomas.",
+"15.0":"La oficina emite las resoluciones de Consejo Universitario y las envía al Rectorado para su firma.","15.1":"En paralelo se imprimen los diplomas físicos de todos los expedientes y se llevan a cada facultad.","15.2":"Los decanos o directores firman los diplomas en su facultad.","15.3":"Los diplomas pasan luego a la firma de la secretaria general.","15.4":"Finalmente firma el rector. Con esa firma el diploma queda listo.",
+"16.0":"Con las firmas, se envía a cada alumno un correo con la resolución del Consejo Universitario firmada digitalmente por el rector.","16.1":"En paralelo se escanean los diplomas, necesarios para el registro en SUNEDU.","16.2":"Después de escanear, cada diploma se guarda en un portadiplomas y se agrupa por facultad para entregarlo a la facultad correspondiente.",
+"17.0":"Se descarga un padrón con el listado de expedientes que se registrarán en SUNEDU.","17.1":"Se adjuntan los diplomas escaneados de esos expedientes.","17.2":"Se prepara un oficio de Secretaría General, que la secretaria general firma.","17.3":"Todo se envía por mesa de partes virtual a SUNEDU, que tiene 10 días hábiles para registrar los diplomas en su base de datos.",
+"20.0":"SUNEDU registra tu diploma en su base de datos y lo comunica a la universidad.","20.1":"Se verifica que tu expediente no tenga observaciones y que esté registrado en SUNEDU.","20.2":"En el ERP se cambia tu condición de egresante a bachiller, para todos los alumnos registrados ante SUNEDU.","20.3":"Con la condición de bachiller en el ERP, ya puedes solicitar el apto al título profesional."};
 const N=S.length,G=330,SEG=340,$=i=>document.getElementById(i),cv=$("cv"),ctx=cv.getContext("2d");
 let Wl,Hl,sc;
-function rs(){sc=innerHeight/400;Wl=innerWidth/sc;Hl=400;if(Wl<560){sc=innerWidth/560;Wl=560;Hl=innerHeight/sc}cv.width=Math.round(Wl);cv.height=Math.round(Hl)}
+let PD=0;function rs(){const vw=innerWidth,vh=innerHeight;PD=matchMedia("(pointer:coarse)").matches?100:0;sc=Math.min(vh/470,vw/560);Wl=vw/sc;Hl=vh/sc;cv.width=Math.round(Wl);cv.height=Math.round(Hl);cv.style.width=vw+"px";cv.style.height=vh+"px";document.body.style.height=vh+"px"}
 addEventListener("resize",rs);rs();
 const mk=(a,b)=>{const t=document.createElement("canvas");t.width=t.height=28;const g=t.getContext("2d");g.fillStyle=a;g.fillRect(0,0,28,28);g.fillStyle=b;g.fillRect(0,13,28,2);g.fillRect(0,26,28,2);g.fillRect(13,0,2,14);g.fillRect(6,14,2,14);g.fillRect(20,14,2,14);return ctx.createPattern(t,"repeat")};
-const brk=mk("#b5651d","#7a3f0d"),brk2=mk("#e0883a","#8a4510"),brk3=mk("#2a4a8f","#16306a");
+const brk=mk("#b5651d","#7a3f0d"),brk2=mk("#e0883a","#8a4510"),brk3=mk("#2a4a8f","#16306a"),brk4=mk("#e2b45f","#c8923a");
 /* Nivel */
-let solids=[],qs=[],ens=[],coinsL=[];let cx=0;
+let solids=[],qs=[],ens=[],coinsL=[];let cx=0;const WK={};{let kc=0;S.forEach((s,i)=>{if(s[5].length)WK[i]=["u","s","w","d"][kc++%4]})}
 const gr=(x,w)=>solids.push({x,y:G,w,h:120,t:"g"});
 gr(0,420);cx=420;
 S.forEach((s,i)=>{const t=i%4,q=x=>{const b={x,y:G-130,w:36,h:36,t:"q",i,cx,bump:0,used:false};solids.push(b);qs.push(b)},co=(x,y)=>coinsL.push({x,y,got:false});
- if(s[5].length){gr(cx,SEG);solids.push({x:cx+80,y:G-70,w:48,h:70,t:"p",en:i},{x:cx+200,y:G-900,w:30,h:900,t:"w"},{x:cx+260,y:G-70,w:48,h:70,t:"p",ex:i});co(cx+20,G-40)}else if(t==0){gr(cx,SEG);q(cx+150);co(cx+60,G-40);co(cx+90,G-40)}
+ if(s[5].length){gr(cx,SEG);if(WK[i]!="s")solids.push({x:cx+80,y:G-70,w:48,h:70,t:"p",en:i});solids.push({x:cx+200,y:G-900,w:30,h:900,t:"w",m:WK[i]=="s"?i:-1},{x:cx+260,y:G-70,w:48,h:70,t:"p",ex:i});co(cx+20,G-40)}else if(t==0){gr(cx,SEG);q(cx+150);co(cx+60,G-40);co(cx+90,G-40)}
  else if(t==1){gr(cx,120);gr(cx+230,110);q(cx+250);[0,1,2].forEach(k=>co(cx+140+k*30,G-80-Math.sin(k*1.57)*25))}
  else if(t==2){gr(cx,100);gr(cx+250,90);solids.push({x:cx+145,y:G-60,w:60,h:18,t:"b"});q(cx+270);[0,1,2].forEach(k=>co(cx+150+k*25,G-95))}
  else{gr(cx,SEG);solids.push({x:cx+200,y:G-50,w:44,h:50,t:"p"});ens.push({x:cx+70,y:G-26,w:28,h:26,vx:-.8,a:cx+30,b:cx+180,al:true});q(cx+290)}
@@ -88,7 +117,7 @@ S.forEach((s,i)=>{const t=i%4,q=x=>{const b={x,y:G-130,w:36,h:36,t:"q",i,cx,bump
 const endX=cx+100;let LW=cx+700;gr(cx,700);solids.push({x:endX,y:G-30,w:240,h:30,t:"s"});
 /* Estado */
 const p={x:80,y:G-34,w:24,h:34,vx:0,vy:0,on:false,f:1,inv:0};
-let zone="o",sv,us=0,ui=0,ux=0,hs=-1,big=false,step=0,coins=0,lives=3,paused=false,mode="play",cp=80,tick=0,gt=0,cur=null,keys={},jl=false,cf=[],camX=0,won=false;
+let zone="o",rb=0,sv,us=0,ui=0,ux=0,hs=-1,big=false,step=0,coins=0,lives=3,paused=false,mode="play",cp=80,tick=0,gt=0,cur=null,keys={},jl=false,cf=[],camX=0,won=false;
 const ov=(a,b)=>a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 let ac;const bp=(f,d=.1,ty="square")=>{try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=ty;o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}};
 let ht;const hint=m=>{const h=$("hint");h.textContent=m;h.classList.add("on");clearTimeout(ht);ht=setTimeout(()=>h.classList.remove("on"),2800)};
@@ -96,42 +125,52 @@ let ht;const hint=m=>{const h=$("hint");h.textContent=m;h.classList.add("on");cl
 const set=(k,v)=>{keys[k]=v;if(k=="j"&&!v)jl=false};
 const KM={ArrowLeft:"l",a:"l",A:"l",ArrowRight:"r",d:"r",D:"r",ArrowUp:"j",w:"j",W:"j"," ":"j",ArrowDown:"dn",s:"dn",S:"dn"};
 addEventListener("keydown",e=>{const k=KM[e.key];if(k){e.preventDefault();if(!paused)set(k,true)}});
+addEventListener("keydown",e=>{if(e.key=="Enter"&&!e.repeat&&$("pop").classList.contains("on")&&document.activeElement!=$("pb")){e.preventDefault();$("pb").click()}});
 addEventListener("keyup",e=>{const k=KM[e.key];if(k)set(k,false)});
 [["bl","l"],["br","r"],["bd","dn"],["bj","j"]].forEach(([id,k])=>{const b=$(id);b.addEventListener("pointerdown",e=>{e.preventDefault();if(!paused)set(k,true)});["pointerup","pointerleave","pointercancel"].forEach(ev=>b.addEventListener(ev,()=>set(k,false)))});
 /* Popup de paso */
 function openStep(i,b){paused=true;keys={};const s=S[i];$("pc").style.borderTopColor=C[s[1]];$("pn").textContent="PASO "+(i+1)+" DE "+N;const w=$("pw");w.textContent=s[2];w.style.background=C[s[1]];
- $("pt").textContent=s[0]+" "+s[3];$("pd").textContent=s[4];
+ $("pt").textContent=s[0]+" "+s[3];$("pd").textContent=LD[i]||s[4];
  $("ps").innerHTML=s[5].map((x,k)=>{const[a,c]=x.split("|");return'<div class="sub"><i>'+(k+1)+"</i><b>"+a+"</b><span>"+c+"</span></div>"}).join("");
  const e=EX[s[6]],pe=$("pe");pe.hidden=!e;if(e)pe.innerHTML="<b>👁 Así se ve: "+e[0]+"</b>"+e[1]+'<div style="color:#888;font-size:11px;margin-top:4px">Ejemplo referencial; el formato real puede variar.</div>';
  $("pop").classList.add("on");cur=b;bp(660,.15)}
 $("pb").onclick=()=>{$("pop").classList.remove("on");paused=false;if(!cur)return;cur.used=true;bp(880,.2);coins++;if(cur.sub){us++;if(us==S[ui][5].length)hint("¡Listo! Camina a la derecha y entra al tubo para subir →");return}step++;cp=cur.cx+SEG-30;donePhase(step-1);if(step==N)hint("¡Todos los pasos! Camina hacia el estrado de graduación →")};
 function bump(b){b.bump=8;bp(300,.08);if(b.used)return;if(b.sub){if(b.i!=us)hint("Golpea los cubos en orden: el "+(us+1));else openSub(b);return}if(b.i!=step){hint(b.i>step?"Primero golpea el cubo del paso "+(step+1):"");return}openStep(b.i,b)}
-function die(f){if(p.inv>0||p.star>0||mode!="play")return;if(big&&!f){big=false;p.y+=10;p.h=34;p.w=24;p.inv=90;bp(200,.3);hint("¡Ay! Volviste a tu tamaño normal");return}lives--;bp(160,.4,"sawtooth");if(lives<=0){lives=3;hint("¡Sin vidas! Vuelves al último punto con 3 vidas")}else hint("¡Cuidado! Te quedan "+lives+" vidas");p.x=cp;p.y=G-p.h-2;p.vx=p.vy=0;p.inv=90;ens.forEach(e=>e.al=true)}
+function die(f){if(p.inv>0||p.star>0||mode!="play")return;if(big&&!f){big=false;p.y+=10;p.h=34;p.w=24;p.inv=90;bp(200,.3);hint("¡Ay! Volviste a tu tamaño normal");return}lives--;bp(160,.4,"sawtooth");if(lives<=0){lives=3;hint("¡Sin vidas! Vuelves al último punto con 3 vidas")}else hint("¡Cuidado! Te quedan "+lives+" vidas");p.x=zone=="o"?cp:40;p.y=(zone=="o"?G:rb)-p.h-2;p.vx=p.vy=0;p.inv=90;ens.forEach(e=>e.al=true)}
 const its=[];
 function pow(k){bp(990,.3);if(k==0){if(!big){big=true;p.y-=10;p.h=44;p.w=31}hint("¡Creciste! Ahora aguantas un golpe")}else if(k==1){p.star=600;hint("¡Invencible 10 segundos! Choca con los enemigos")}else{lives+=2;hint("¡+2 vidas!")}}
 function donePhase(i){const k=[9,13,16].indexOf(i);if(k<0)return;its.push({x:p.x+30,y:G-140,vy:0,k,al:true});hint(["¡Fase 1 completa! Recoge el 🍄 para crecer","¡Fase 2 completa! Recoge la ⭐ invencible","¡Fase 3 completa! Recoge el 💚 +2 vidas"][k])}
 function fade(f){const e=$("fd");paused=true;keys={};e.style.opacity=1;setTimeout(()=>{f();e.style.opacity=0},350)}
-function enter(i){fade(()=>{const s=S[i],n=s[5].length,W=520+n*120;sv={solids,qs,ens,coinsL,LW};zone="u";us=0;ui=i;solids=[{x:-60,y:G,w:W+120,h:120,t:"f"},{x:-60,y:G-190,w:W+120,h:60,t:"c"},{x:-60,y:G-190,w:60,h:320,t:"c"}];qs=[];ens=[];coinsL=[];s[5].forEach((x,k)=>{const b={x:200+k*120,y:G-130,w:36,h:36,t:"q",i:k,bump:0,used:false,sub:1};solids.push(b);qs.push(b)});LW=W;ux=W-70;p.x=40;p.y=G-p.h-2;p.vx=p.vy=0;openStep(i,null)})}
+function enter(i){fade(()=>{const s=S[i],n=s[5].length,k=WK[i],W=k=="s"?500+n*170:520+n*120;sv={solids,qs,ens,coinsL,LW};zone=k;us=0;ui=i;qs=[];ens=[];coinsL=[];rb=G;
+ solids=k=="s"?[{x:-60,y:G-60,w:220,h:20,t:"k"},{x:W-260,y:G-60,w:300,h:20,t:"k"}]:[{x:-60,y:G,w:W+120,h:120,t:"f"}];
+ if(k=="u"||k=="w")solids.push({x:-60,y:G-(k=="w"?340:190),w:W+120,h:60,t:"c"},{x:-60,y:G-300,w:60,h:700,t:"c"});
+ if(k=="s")rb=G-60;
+ s[5].forEach((x,j)=>{let bx=200+j*120,by=G-130;if(k=="s"){bx=230+j*170;by=G-190-(j%3)*40;solids.push({x:bx-35,y:by+130,w:110,h:20,t:"k"})}if(k=="w")by=G-(j%2?200:80);const b={x:bx,y:by,w:36,h:36,t:"q",i:j,bump:0,used:false,sub:1};solids.push(b);qs.push(b);
+  if(k=="d"&&j<n-1)ens.push({x:bx+70,y:G-28,w:24,h:28,vx:0,a:0,b:1e9,al:true,sp:1});
+  if(k=="w"&&j<n-1)ens.push({x:bx+70,y:j%2?G-30:G-190,w:28,h:28,vx:0,a:0,b:1e9,al:true,sp:1})});
+ LW=W;ux=W-70;p.x=40;p.y=rb-p.h-2;p.vx=p.vy=0;openStep(i,null)})}
+function enterOld(i){fade(()=>{const s=S[i],n=s[5].length,W=520+n*120;sv={solids,qs,ens,coinsL,LW};zone="u";us=0;ui=i;solids=[{x:-60,y:G,w:W+120,h:120,t:"f"},{x:-60,y:G-190,w:W+120,h:60,t:"c"},{x:-60,y:G-190,w:60,h:320,t:"c"}];qs=[];ens=[];coinsL=[];s[5].forEach((x,k)=>{const b={x:200+k*120,y:G-130,w:36,h:36,t:"q",i:k,bump:0,used:false,sub:1};solids.push(b);qs.push(b)});LW=W;ux=W-70;p.x=40;p.y=G-p.h-2;p.vx=p.vy=0;openStep(i,null)})}
 function leave(){fade(()=>{const i=ui;({solids,qs,ens,coinsL,LW}=sv);zone="o";const s=solids.find(s=>s.ex===i);p.x=s.x+(s.w-p.w)/2;p.y=s.y-p.h;p.vx=p.vy=0;step++;coins++;cp=s.x+50;donePhase(i);paused=false;hint(step==N?"¡Todos los pasos! Camina hacia el estrado de graduación →":"¡Subproceso completo! Sigue avanzando →")})}
-function openSub(b){paused=true;keys={};const s=S[ui],[a,c]=s[5][b.i].split("|");$("pc").style.borderTopColor=C[s[1]];$("pn").textContent="SUBPASO "+(b.i+1)+" DE "+s[5].length+" · PASO "+(ui+1);const w=$("pw");w.textContent=s[2];w.style.background=C[s[1]];$("pt").textContent="🔹 "+a;$("pd").textContent=c;$("ps").innerHTML="";$("pe").hidden=true;$("pop").classList.add("on");cur=b;bp(660,.15)}
+function openSub(b){paused=true;keys={};const s=S[ui],[a,c]=s[5][b.i].split("|");$("pc").style.borderTopColor=C[s[1]];$("pn").textContent={u:"SUBSUELO",s:"CIELO",w:"OCÉANO",d:"DESIERTO"}[zone]+" · SUBPASO "+(b.i+1)+" DE "+s[5].length+" · PASO "+(ui+1);const w=$("pw");w.textContent=s[2];w.style.background=C[s[1]];$("pt").textContent="🔹 "+a;$("pd").textContent=SD[ui+"."+b.i]||c;$("ps").innerHTML="";$("pe").hidden=true;$("pop").classList.add("on");cur=b;bp(660,.15)}
 function finish(){mode="grad";gt=0;keys={};p.x=endX+110;p.y=G-30-p.h;p.vx=p.vy=0;p.f=1;for(let i=0;i<180;i++)cf.push({x:endX+Math.random()*260,y:-Math.random()*300,vx:(Math.random()-.5)*2,vy:1+Math.random()*2,c:["#e8a900","#d6243f","#1f5fa8","#4cb731","#fff"][i%5]});bp(880,.4)}
 /* Física */
 function upd(){if(paused)return;tick++;
  if(mode=="grad"){gt++;cf.forEach(c=>{c.y+=c.vy;c.x+=c.vx+Math.sin(c.y*.05);if(c.y>G+30)c.y=-20});if(gt==110&&!won){won=true;$("ws").textContent=N;$("wc").textContent=coins;$("win").classList.add("on")}return}
  if(keys.l){p.vx-=.5;p.f=-1}else if(keys.r){p.vx+=.5;p.f=1}else p.vx*=.8;
- p.vx=Math.max(-4,Math.min(4,p.vx));if(Math.abs(p.vx)<.1&&!keys.l&&!keys.r)p.vx=0;
- if(keys.j&&p.on&&!jl){p.vy=-11;jl=true;bp(520,.12)}
- p.vy=Math.min(14,p.vy+((p.vy<0&&!keys.j)?1.4:.6));
+ const mx=zone=="w"?2.6:4;p.vx=Math.max(-mx,Math.min(mx,p.vx));if(Math.abs(p.vx)<.1&&!keys.l&&!keys.r)p.vx=0;
+ if(keys.j&&p.on&&!jl&&zone!="w"){p.vy=-11;jl=true;bp(520,.12)}
+ if(zone=="w")p.vy=Math.max(-3,Math.min(2.5,p.vy+.15-(keys.j?.5:0)));else p.vy=Math.min(14,p.vy+((p.vy<0&&!keys.j)?1.4:.6));
+ if(zone=="o"){const w=solids.find(s=>s.t=="w"&&s.m==step&&p.y<s.y+s.h&&p.x+p.w>s.x-40&&p.x<s.x);if(w){if(p.x+p.w>=w.x-2){if(keys.r){p.vy=-2.5;p.x=w.x-p.w;if(p.y<G-260)enter(step)}}else if(hs!=step){hs=step;hint("¡Pared imán! Mantén → para trepar hacia el cielo")}}}
  p.x+=p.vx;if(p.x<0){p.x=0;p.vx=0}
  for(const s of solids)if(ov(p,s)){if(p.vx>0)p.x=s.x-p.w;else if(p.vx<0)p.x=s.x+s.w;p.vx=0}
  p.y+=p.vy;p.on=false;
  for(const s of solids)if(ov(p,s)){if(p.vy>0){p.y=s.y-p.h;p.on=true}else if(p.vy<0){p.y=s.y+s.h;if(s.t=="q")bump(s)}p.vy=0}
  if(p.y>G+160)die(1);if(p.inv>0)p.inv--;if(p.star>0)p.star--;
  if(zone=="o"&&p.on){const s=solids.find(s=>s.en!=null&&p.y+p.h==s.y&&p.x+p.w>s.x+8&&p.x<s.x+s.w-8);if(s&&s.en==step){if(keys.dn)enter(step);else if(hs!=step){hs=step;hint("Presiona ▼ (o ↓ / S) para entrar al tubo")}}}
- if(zone=="u"&&p.x>ux-30){if(us<S[ui][5].length){p.x=ux-30;p.vx=0;hint("Completa los subpasos: golpea los cubos ? en orden")}else leave()}
+ if(zone!="o"&&p.x>ux-30){if(us<S[ui][5].length){p.x=ux-30;p.vx=0;hint("Completa los subpasos: golpea los cubos ? en orden")}else leave()}
  if(zone=="o")its.forEach(t=>{if(!t.al)return;t.vy=Math.min(8,t.vy+.5);t.y+=t.vy;const r={x:t.x,y:t.y,w:26,h:26};for(const s of solids)if(ov(r,s)&&t.vy>0){t.y=s.y-26;t.vy=0}if(ov(p,{x:t.x,y:t.y,w:26,h:26})){t.al=false;pow(t.k)}});
  qs.forEach(b=>{if(b.bump>0)b.bump--});
- ens.forEach(e=>{if(!e.al)return;e.x+=e.vx;if(e.x<e.a||e.x>e.b)e.vx*=-1;if(ov(p,e)){if(p.vy>0&&p.y+p.h-e.y<16){e.al=false;p.vy=-8;bp(400,.1)}else if(p.star>0){e.al=false;bp(400,.1)}else die()}});
+ ens.forEach(e=>{if(!e.al)return;e.x+=e.vx;if(e.x<e.a||e.x>e.b)e.vx*=-1;if(ov(p,e)){if(p.vy>0&&p.y+p.h-e.y<16&&!e.sp){e.al=false;p.vy=-8;bp(400,.1)}else if(p.star>0){e.al=false;bp(400,.1)}else die()}});
  coinsL.forEach(c=>{if(!c.got&&Math.abs(p.x+12-c.x)<18&&Math.abs(p.y+17-c.y)<22){c.got=true;coins++;bp(990,.08)}});
  if(p.x>endX-40){if(step<N){p.x=endX-40;p.vx=0;hint("Aún te faltan pasos: vuelve a golpear los cubos ?")}else finish()}
  $("h1").textContent="❤️×"+lives+"  🪙"+coins+"  PASO "+Math.min(step+1,N)+"/"+N+(big?" 🍄":"")+(p.star>0?" ⭐":"")}
@@ -148,28 +187,30 @@ function player(x,y,g){ctx.save();ctx.translate(x+p.w/2,y);const B=p.h/34;ctx.sc
   ctx.fillStyle="#1f5fa8";ctx.fillRect(-11,18,22,10);ctx.fillStyle="#d6243f";ctx.fillRect(-14,19,4,8);ctx.fillRect(10,19,4,8);
   ctx.fillStyle="#5a3a1a";ctx.fillRect(-9+lw,28,8,6);ctx.fillRect(1-lw,28,8,6)}
  ctx.restore()}
-function draw(){const W=cv.width,H=cv.height,oy=H-400,U=zone=="u";
- const sk=ctx.createLinearGradient(0,0,0,H);sk.addColorStop(0,"#4a86f0");sk.addColorStop(1,"#bfe0ff");ctx.fillStyle=U?"#0b0f24":sk;ctx.fillRect(0,0,W,H);
+function draw(){const W=cv.width,H=cv.height,oy=Math.round((H-PD/sc-400)/2),U=zone=="u"||zone=="w";
+ const sk=ctx.createLinearGradient(0,0,0,H);sk.addColorStop(0,"#4a86f0");sk.addColorStop(1,"#bfe0ff");ctx.fillStyle={u:"#0b0f24",w:"#0a4a8a",d:"#f7d9a0"}[zone]||sk;ctx.fillRect(0,0,W,H);
  camX=Math.max(0,Math.min(LW-W,p.x-W*.4));
  ctx.fillStyle="#fff";if(!U)for(let k=0;k<14;k++){const x=((k*230-camX*.3)%(W+260)+W+260)%(W+260)-130,y=oy+30+(k*53)%110;[0,22,44].forEach((d,j)=>{ctx.beginPath();ctx.arc(x+d,y+(j==1?-8:0),16+(j==1?6:0),0,7);ctx.fill()})}
- ctx.fillStyle="#6dbb4a";if(!U)for(let k=0;k<8;k++){const x=((k*340-camX*.5)%(W+400)+W+400)%(W+400)-200;ctx.beginPath();ctx.arc(x,G+oy,70+(k%3)*20,Math.PI,0);ctx.fill()}
+ ctx.fillStyle=zone=="d"?"#e8b96a":"#6dbb4a";if(!U&&zone!="s")for(let k=0;k<8;k++){const x=((k*340-camX*.5)%(W+400)+W+400)%(W+400)-200;ctx.beginPath();ctx.arc(x,G+oy,70+(k%3)*20,Math.PI,0);ctx.fill()}
  ctx.save();ctx.translate(-Math.round(camX),oy);
  solids.forEach(s=>{if(s.x>camX+W||s.x+s.w<camX)return;
-  if(s.t=="g"){ctx.fillStyle=brk;ctx.fillRect(s.x,s.y,s.w,400);ctx.fillStyle="#4cb731";ctx.fillRect(s.x,s.y,s.w,8);ctx.fillStyle="#2f8a1f";ctx.fillRect(s.x,s.y+8,s.w,3)}
+  if(s.t=="g"){ctx.fillStyle=brk;ctx.fillRect(s.x,s.y,s.w,1200);ctx.fillStyle="#4cb731";ctx.fillRect(s.x,s.y,s.w,8);ctx.fillStyle="#2f8a1f";ctx.fillRect(s.x,s.y+8,s.w,3)}
   else if(s.t=="b"){ctx.fillStyle=brk2;ctx.fillRect(s.x,s.y,s.w,s.h)}
-  else if(s.t=="f"||s.t=="c"){ctx.fillStyle=brk3;ctx.fillRect(s.x,s.y,s.w,s.h)}
-  else if(s.t=="w"){ctx.fillStyle="#444";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle="#666";ctx.fillRect(s.x+4,s.y,6,s.h);ctx.font="20px sans-serif";ctx.fillText("🔒",s.x+4,G-90)}
+  else if(s.t=="f"||s.t=="c"){ctx.fillStyle=zone=="d"?brk4:brk3;ctx.fillRect(s.x,s.y,s.w,s.t=="f"?1200:s.h)}
+  else if(s.t=="k"){ctx.fillStyle="#fff";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.beginPath();ctx.arc(s.x+20,s.y,14,0,7);ctx.arc(s.x+55,s.y-4,18,0,7);ctx.arc(s.x+s.w-20,s.y,14,0,7);ctx.fill();ctx.fillStyle="#cfe6ff";ctx.fillRect(s.x,s.y+s.h-5,s.w,5)}
+  else if(s.t=="w"){ctx.fillStyle="#444";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle="#666";ctx.fillRect(s.x+4,s.y,6,s.h);ctx.font="20px sans-serif";ctx.fillText(s.m>=0?"🧲":"🔒",s.x+4,G-90)}
   else if(s.t=="p"){ctx.fillStyle="#2ea84a";ctx.fillRect(s.x+4,s.y+10,s.w-8,s.h-10);ctx.fillStyle="#1f7a35";ctx.fillRect(s.x,s.y,s.w,12);if(s.en===step){ctx.fillStyle="#fff";ctx.font="16px sans-serif";ctx.fillText("▼",s.x+16,s.y-8-Math.abs(Math.sin(tick*.1))*6)}}
   else if(s.t=="s"){ctx.fillStyle="#0a2e6e";ctx.fillRect(s.x,s.y,s.w,s.h);ctx.fillStyle="#e8a900";ctx.fillRect(s.x,s.y,s.w,6);ctx.fillStyle="#fff";ctx.font="10px 'Press Start 2P',monospace";ctx.fillText("UAC",s.x+90,s.y+22)}
   else if(s.t=="q"){const o=s.bump>0?-Math.sin(s.bump/8*Math.PI)*8:0;ctx.fillStyle=s.used?"#9c7a4a":"#f2b705";ctx.fillRect(s.x,s.y+o,s.w,s.h);ctx.strokeStyle="#7a5300";ctx.lineWidth=3;ctx.strokeRect(s.x+1,s.y+o+1,s.w-2,s.h-2);
    ctx.fillStyle=s.used?"#6b5330":"#7a5300";ctx.font="bold 22px monospace";ctx.textAlign="center";ctx.fillText(s.used?"✓":"?",s.x+18,s.y+o+27);ctx.font="8px 'Press Start 2P',monospace";ctx.fillStyle="#fff";ctx.fillText(""+(s.i+1),s.x+18,s.y-6);ctx.textAlign="left"}});
- ctx.fillStyle="#fff";ctx.font="9px 'Press Start 2P',monospace";if(U){ctx.fillStyle="#2ea84a";ctx.fillRect(ux-20,G-64,70,64);ctx.fillStyle="#1f7a35";ctx.fillRect(ux-28,G-70,14,76);ctx.fillStyle="#fff";ctx.fillText("SALIDA ►",ux-90,G-80)}else ctx.fillText("INICIO ►",60,G-20);
+ ctx.fillStyle="#fff";ctx.font="9px 'Press Start 2P',monospace";if(zone!="o"){ctx.save();if(zone=="s")ctx.translate(0,-60);ctx.fillStyle="#2ea84a";ctx.fillRect(ux-20,G-64,70,64);ctx.fillStyle="#1f7a35";ctx.fillRect(ux-28,G-70,14,76);ctx.fillStyle="#fff";ctx.fillText("SALIDA ►",ux-90,G-80);ctx.restore()}else ctx.fillText("INICIO ►",60,G-20);
  ctx.fillStyle="#7a5a2a";ctx.fillRect(endX+10,G-150,6,120);ctx.fillRect(endX+224,G-150,6,120);ctx.fillStyle="#d6243f";ctx.fillRect(endX+16,G-150,208,34);ctx.fillStyle="#fff";ctx.font="10px 'Press Start 2P',monospace";ctx.fillText("¡BACHILLER!",endX+48,G-128);
  coinsL.forEach(c=>{if(c.got)return;const w=Math.abs(Math.cos(tick*.1))*8+2;ctx.fillStyle="#ffce56";ctx.beginPath();ctx.ellipse(c.x,c.y,w,9,0,0,7);ctx.fill();ctx.strokeStyle="#b98600";ctx.lineWidth=2;ctx.stroke()});
- ens.forEach(e=>{if(!e.al)return;ctx.fillStyle="#8b4513";ctx.beginPath();ctx.ellipse(e.x+14,e.y+12,15,13,0,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(e.x+6,e.y+7,6,6);ctx.fillRect(e.x+16,e.y+7,6,6);ctx.fillStyle="#000";ctx.fillRect(e.x+8,e.y+9,3,3);ctx.fillRect(e.x+18,e.y+9,3,3);ctx.fillRect(e.x+5,e.y+4,8,2);ctx.fillRect(e.x+15,e.y+4,8,2);ctx.fillStyle="#3b1f0a";ctx.fillRect(e.x+2,e.y+22,10,4);ctx.fillRect(e.x+16,e.y+22,10,4)});
+ ens.forEach(e=>{if(!e.al)return;if(e.sp){const w=zone=="w";ctx.fillStyle=w?"#a64ac9":"#2e9a3c";ctx.beginPath();ctx.ellipse(e.x+12,e.y+16,12,13,0,0,7);ctx.fill();ctx.strokeStyle=w?"#e8b6ff":"#145a1e";ctx.lineWidth=2;for(let a=0;a<8;a++){const t=a*.785;ctx.beginPath();ctx.moveTo(e.x+12+Math.cos(t)*10,e.y+16+Math.sin(t)*11);ctx.lineTo(e.x+12+Math.cos(t)*18,e.y+16+Math.sin(t)*19);ctx.stroke()}return}ctx.fillStyle="#8b4513";ctx.beginPath();ctx.ellipse(e.x+14,e.y+12,15,13,0,0,7);ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(e.x+6,e.y+7,6,6);ctx.fillRect(e.x+16,e.y+7,6,6);ctx.fillStyle="#000";ctx.fillRect(e.x+8,e.y+9,3,3);ctx.fillRect(e.x+18,e.y+9,3,3);ctx.fillRect(e.x+5,e.y+4,8,2);ctx.fillRect(e.x+15,e.y+4,8,2);ctx.fillStyle="#3b1f0a";ctx.fillRect(e.x+2,e.y+22,10,4);ctx.fillRect(e.x+16,e.y+22,10,4)});
  its.forEach(t=>{if(t.al){ctx.font="26px sans-serif";ctx.fillText(["🍄","⭐","💚"][t.k],t.x,t.y+24)}});player(p.x,p.y+(mode=="grad"?-Math.abs(Math.sin(gt*.12))*14:0),mode=="grad");
  cf.forEach(c=>{ctx.fillStyle=c.c;ctx.fillRect(c.x,c.y,5,5)});
- ctx.restore()}
+ if(zone=="w"){ctx.fillStyle="rgba(255,255,255,.25)";for(let k=0;k<14;k++){ctx.beginPath();ctx.arc((k*97+tick*.3*(k%3+1))%W,H-((tick*.8*(k%4+1)+k*60)%H),3+k%3,0,7);ctx.fill()}}
+ctx.restore()}
 let last=0,acc=0;
 function frame(t){const dt=Math.min(100,t-last);last=t;acc+=dt;while(acc>=16.67){upd();acc-=16.67}draw();requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
